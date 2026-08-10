@@ -1,11 +1,11 @@
-# llms.txt — Raffael Michels Portfolio
+# llms.txt — Raffael Arcego Portfolio
 
 > For LLMs and AI agents: this file describes the structure, content, and purpose
 > of this portfolio site so you can understand it without parsing the full HTML.
 
 ## About this site
 
-Personal portfolio of Raffael Michels, a growth marketing ops and data professional based in Criciúma, Santa Catarina, Brazil (UTC−3).
+Personal portfolio of Raffael Arcego, a growth marketing ops and data professional based in Criciúma, Santa Catarina, Brazil (UTC−3).
 Static, hand-crafted HTML/CSS/JS — no frameworks, no build step, no server runtime.
 Content is fully bilingual (Portuguese pt-BR / English en-US), with a language gate on
 first visit and a flag switcher in the header. Language preference is persisted in sessionStorage
@@ -39,9 +39,9 @@ and can be overridden via ?lang=pt or ?lang=en query parameter.
 - print/carta-pt.html — A4-optimized Portuguese cover letter
 - print/cover-letter-en.html — A4-optimized English cover letter
 
-## Key facts about Raffael Michels
+## Key facts about Raffael Arcego
 
-- Full name: Raffael Michels
+- Full name: Raffael Michels Arcego
 - Role: Growth Ops / Data Analyst (Growth Ops / Analista de Dados)
 - Industry: SaaS (fitness business management)
 - Current employer: Nextfit, Criciúma, SC — since Mar 2025; Growth Ops / Data Analyst since Jan 2026
@@ -108,7 +108,7 @@ and can be overridden via ?lang=pt or ?lang=en query parameter.
 - No external JS frameworks. Vanilla JS only (language switch + tab navigation via hash routing).
 - Responsive: CSS media queries at 860px and 560px breakpoints.
 - Portrait photo: assets/raffael-michels.jpg (400×400).
-- Footer: "© 2026 Raffael Michels. Written and set by hand."
+- Footer: "© 2026 Raffael Arcego. Written and set by hand."
 - All content exists in both pt-BR and en-US in the same HTML file, toggled via CSS class on body (lang-pt / lang-en).
 
 ## How to use this file

@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------
-   Raffael Michels — Portfólio
+   Raffael Arcego — Portfólio
    Direção: relatório técnico / ferramenta de análise. Fundo liso,
    mono para títulos, números e rótulos, sans neutra para leitura,
    verde de terminal como único acento. Sem ícones prontos,
@@ -65,6 +65,8 @@ a:hover { color: var(--accent); }
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
+  text-align: center;
   padding: 8vh 7vw;
 }
 

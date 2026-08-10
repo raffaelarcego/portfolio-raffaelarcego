@@ -13,8 +13,8 @@
     body.classList.add(lang === "en" ? "lang-en" : "lang-pt");
     document.documentElement.lang = lang === "en" ? "en-US" : "pt-BR";
     document.title = lang === "en"
-      ? "Raffael Michels — Data Analyst & Computer Vision"
-      : "Raffael Michels — Analista de Dados & Visão Computacional";
+      ? "Raffael Arcego — Data Analyst & Computer Vision"
+      : "Raffael Arcego — Analista de Dados & Visão Computacional";
     try { sessionStorage.setItem("lang", lang); } catch (e) { /* modo privado */ }
 
     var switches = document.querySelectorAll("[data-set-lang]");
