@@ -1,0 +1,14 @@
+{
+    "analytical_inverse": {
+        "rmse": 5.0369,
+        "f1": 0.7695
+    },
+    "xgboost_classifier": {
+        "f1": 0.9999
+    },
+    "xgboost_regressor": {
+        "rmse": 0.41,
+        "mae": 0.08,
+        "r2": 0.9966
+    }
+}

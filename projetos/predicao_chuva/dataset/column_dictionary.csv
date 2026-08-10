@@ -1,0 +1,37 @@
+Column,Type,Units,Description
+timestamp,datetime,UTC,Simulation timestamp (1-minute resolution)
+received_snr_db,float,dB,Received signal-to-noise ratio at the receiver
+carrier_frequency_ghz,float,GHz,Carrier frequency of the satellite link
+elevation_angle_deg,float,degrees,Ground-to-satellite elevation angle
+slant_range_km,float,km,Slant range distance from ground station to satellite
+fspl_db,float,dB,Free Space Path Loss
+gaseous_attenuation_db,float,dB,Atmospheric gas absorption loss (ITU-R P.676)
+excess_attenuation_db,float,dB,Path attenuation beyond FSPL and gaseous losses (rain + scintillation)
+effective_path_length_km,float,km,Effective path length through the rain layer (ITU-R P.618)
+specific_attenuation_db_per_km,float,dB/km,Specific attenuation (excess attenuation divided by effective path length)
+rain_height_km,float,km,Rain height above sea level (ITU-R P.839)
+frequency_ghz,float,GHz,Carrier frequency (replicated for frequency-aware models)
+itu_k,float,N/A,ITU-R P.838 specific attenuation coefficient k
+itu_alpha,float,N/A,ITU-R P.838 specific attenuation exponent alpha
+station,string,N/A,Name of the ground station location
+climate,string,N/A,Local climate description
+simulation_id,string,N/A,Unique simulation run identifier
+snr_roll_mean_5min,float,dB,5-minute rolling mean of received SNR
+snr_roll_std_5min,float,dB,5-minute rolling standard deviation of received SNR
+snr_roll_max_5min,float,dB,5-minute rolling maximum of received SNR
+snr_roll_min_5min,float,dB,5-minute rolling minimum of received SNR
+snr_roll_mean_30min,float,dB,30-minute rolling mean of received SNR
+snr_roll_std_30min,float,dB,30-minute rolling standard deviation of received SNR
+attenuation_roll_mean,float,dB,5-minute rolling mean of excess attenuation
+attenuation_roll_std,float,dB,5-minute rolling standard deviation of excess attenuation
+attenuation_delta,float,dB,Difference in excess attenuation from previous minute
+snr_delta,float,dB,Difference in received SNR from previous minute
+season_sin,float,N/A,Sine representation of season (month of year)
+season_cos,float,N/A,Cosine representation of season (month of year)
+gs_latitude,float,degrees,Ground station latitude
+gs_humidity,float,%,Ground station average relative humidity
+gs_wv,float,g/m^3,Ground station average water vapor density
+itu_R001,float,mm/h,ITU-R P.837 local rain rate exceeded 0.01% of the year
+itu_P_rain,float,fraction,ITU-R P.837 annual rain probability fraction
+rain_rate_mm_per_hr,float,mm/h,True instantaneous rain rate (primary regression target)
+rain_event,int,binary,"True rain indicator (secondary classification target; 1 if rain rate > 0.1 mm/h, else 0)"

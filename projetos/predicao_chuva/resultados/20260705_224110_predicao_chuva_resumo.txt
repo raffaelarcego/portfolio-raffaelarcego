@@ -1,0 +1,62 @@
+RELATORIO DO PREVISOR DE CHUVA POR TELEMETRIA DE SATELITE
+Data da avaliacao: 05/07/2026 22:41
+
+Dados
+  Treino: 420000 minutos, 53% com chuva
+  Validacao: 90000 minutos, 54% com chuva
+  Teste: 90000 minutos, 54% com chuva
+
+Deteccao do evento de chuva (teste)
+  F1: 0.9999
+  Precisao: 1.0000
+  Revocacao: 0.9998
+  Limiar de decisao escolhido na validacao: 0.50
+
+Intensidade da chuva em mm/h (teste)
+  Em todos os minutos, comparavel aos baselines:
+    RMSE: 0.295   MAE: 0.052   R2: 0.9982
+  So nos minutos com chuva de verdade, a leitura honesta:
+    RMSE: 0.402   MAE: 0.096
+
+Comparacao com os baselines publicados no dataset
+                                           F1     RMSE      MAE
+  Inversao analitica ITU-R             0.7695     5.04        -
+  Baseline XGBoost do dataset          0.9999     0.41     0.08
+  Este pipeline                        0.9999     0.30     0.05
+
+Quanto cada estagio de features acrescenta (validacao)
+                                                 F1     RMSE
+  so fisica do enlace (A)                    0.9993     1.02
+  fisica e dinamica do sinal (A+B)           0.9998     0.86
+  completo com coeficientes ITU (A+B+C)      0.9998     0.84
+
+Features mais importantes por ganho, modelo de deteccao
+  specific_attenuation_db_per_km       6702.1
+  excess_attenuation_db                 917.1
+  attenuation_roll_mean                  49.7
+  gaseous_attenuation_db                 15.6
+  elevation_angle_deg                    13.2
+  fspl_db                                 8.6
+  snr_delta                               6.4
+  snr_roll_std_5min                       6.4
+  snr_roll_min_5min                       6.0
+  snr_roll_std_30min                      6.0
+
+Features mais importantes por ganho, modelo de intensidade
+  excess_attenuation_db               58790.9
+  frequency_ghz                       20886.3
+  fspl_db                             13644.0
+  attenuation_roll_mean               13334.6
+  carrier_frequency_ghz                5555.9
+  received_snr_db                      5539.0
+  specific_attenuation_db_per_km       2304.1
+  attenuation_delta                    1200.9
+  snr_roll_min_5min                     844.0
+  effective_path_length_km              706.7
+
+A atenuacao em excesso e quase uma funcao fisica da chuva, por
+isso os numeros parecem faceis. O merito do modelo esta em
+filtrar o ruido de cintilacao que faz a inversao analitica da
+ITU-R errar dez vezes mais.
+
+Dados: Rain Narrowcasting Benchmark (RainCast), de Satyansh Gaur.

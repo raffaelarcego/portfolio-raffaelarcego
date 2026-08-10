@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Radar do Mercado Fitness — Demonstração</title>
+<meta name="description" content="Estudo do mercado de academias no Brasil a partir dos dados abertos de CNPJ da Receita Federal.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* mesmo vocabulario visual do portfolio: fundo liso, mono
+   para rotulos e numeros, verde de terminal como acento unico */
+:root {
+  --bg: #f7f8f6;
+  --panel: #ffffff;
+  --ink: #191c1a;
+  --soft: #5d6360;
+  --rule: #d4d9d4;
+  --rule-strong: #191c1a;
+  --accent: #0a6847;
+  --accent-dim: #98a09b;
+  --sans: "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
+  --mono: "IBM Plex Mono", Consolas, "Courier New", monospace;
+  /* par de series validado para daltonismo, o mesmo dos outros projetos */
+  --abre: #0072B2;
+  --fecha: #D55E00;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 1.02rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: var(--accent); color: #fff; }
+
+/* troca de idioma no mesmo esquema do site: os dois textos existem
+   no HTML e o CSS esconde o idioma que nao esta ativo */
+body.lang-pt [data-lang="en"] { display: none !important; }
+body.lang-en [data-lang="pt"] { display: none !important; }
+
+a { color: inherit; text-decoration-color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--accent); }
+
+.mono {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.sheet { max-width: 72rem; margin: 0 auto; padding: 0 clamp(1.2rem, 4vw, 3rem) 4rem; }
+
+.topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 1.6rem 0 0.9rem;
+  border-bottom: 1px solid var(--rule-strong);
+}
+.topo .volta { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.06em; }
+.lang-switch button {
+  border: 1px solid var(--rule);
+  background: var(--panel);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0.55rem;
+  cursor: pointer;
+  color: var(--soft);
+}
+.lang-switch button.on { border-color: var(--accent); color: var(--accent); }
+
+.kicker { color: var(--soft); margin: 2.4rem 0 0.6rem; }
+.kicker .no { color: var(--accent); margin-right: 0.6rem; }
+
+h1.display {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: clamp(1.4rem, 3vw, 2.1rem);
+  line-height: 1.35;
+  margin: 0 0 1rem;
+  max-width: 34ch;
+}
+h1.display em { font-style: normal; color: var(--accent); }
+
+.lede { color: var(--soft); max-width: 62ch; margin: 0 0 0.6rem; }
+
+.aviso {
+  border-left: 2px solid var(--accent);
+  padding-left: 0.9rem;
+  color: var(--soft);
+  font-size: 0.92rem;
+  max-width: 62ch;
+  margin: 1rem 0 2.2rem;
+}
+
+/* fileira de numeros de capa */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  margin: 0 0 2.6rem;
+}
+.tile { background: var(--panel); padding: 0.9rem 1rem 0.8rem; }
+.tile .valor {
+  font-family: var(--mono);
+  font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.15;
+}
+.tile .valor em { font-style: normal; color: var(--accent); }
+.tile .rotulo { color: var(--soft); font-size: 0.8rem; margin-top: 0.15rem; }
+
+/* blocos de grafico */
+.bloco { margin: 0 0 3rem; }
+.bloco h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 1.02rem;
+  margin: 0 0 0.2rem;
+}
+.bloco .sub { color: var(--soft); font-size: 0.9rem; max-width: 66ch; margin: 0 0 0.9rem; }
+.quadro {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  padding: 1rem 1rem 0.6rem;
+  position: relative;
+}
+.quadro svg { width: 100%; height: auto; display: block; }
+
+/* o print do painel em Power BI */
+.quadro a.painel { display: block; line-height: 0; }
+.quadro img.painel-img { width: 100%; height: auto; display: block; border: 1px solid var(--rule); }
+.quadro .painel-legenda {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--soft);
+  padding: 0.55rem 0 0.35rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.legenda {
+  display: flex;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--soft);
+  margin: 0.4rem 0 0.4rem;
+}
+.legenda .chip { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 0.45rem; }
+
+/* a dica que segue o mouse */
+#dica {
+  position: fixed;
+  pointer-events: none;
+  background: var(--ink);
+  color: #f2f4f2;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  padding: 0.45rem 0.6rem;
+  border-radius: 2px;
+  z-index: 30;
+  display: none;
+  white-space: nowrap;
+}
+
+/* tabelas de cidades */
+.trio {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.4rem;
+}
+table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+caption {
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--soft);
+  padding-bottom: 0.4rem;
+}
+th, td { text-align: left; padding: 0.3rem 0.5rem 0.3rem 0; border-bottom: 1px dotted var(--rule); }
+th { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--soft); font-weight: 500; }
+td.num, th.num { text-align: right; font-family: var(--mono); font-size: 0.82rem; }
+
+details { margin-top: 0.6rem; }
+summary {
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+details table { margin-top: 0.6rem; max-width: 34rem; }
+
+.metodo { max-width: 66ch; color: var(--soft); font-size: 0.94rem; }
+.metodo strong { color: var(--ink); font-weight: 600; }
+
+footer.colophon {
+  border-top: 1px solid var(--rule-strong);
+  margin-top: 3rem;
+  padding-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  color: var(--soft);
+  font-size: 0.85rem;
+}
+</style>
+</head>
+<body class="lang-pt">
+<div class="sheet">
+
+<div class="topo">
+  <span class="volta"><a href="../../index.html#projetos">&larr; <span data-lang="pt">voltar ao portfólio</span><span data-lang="en">back to portfolio</span></a></span>
+  <span class="lang-switch">
+    <button type="button" data-set-lang="pt">PT</button>
+    <button type="button" data-set-lang="en">EN</button>
+  </span>
+</div>
+
+<p class="kicker mono"><span class="no">radar_fitness</span> <span data-lang="pt">Estudo de mercado com dados públicos</span><span data-lang="en">Market study with public data</span></p>
+
+<h1 class="display">
+  <span data-lang="pt">O mercado de academias do Brasil, lido no <em>cadastro de CNPJ</em>.</span>
+  <span data-lang="en">Brazil's gym market, read straight from the <em>national business registry</em>.</span>
+</h1>
+
+<p class="lede" data-lang="pt">
+  A Receita Federal publica o cadastro completo de CNPJ do país, mais de 60 milhões
+  de estabelecimentos. Este estudo filtra os que têm CNAE principal de academia
+  (9313-1/00, atividades de condicionamento físico) e cruza com a população estimada
+  pelo IBGE para responder quatro perguntas: quanto o mercado cresce, quanto tempo
+  uma academia vive, quando elas abrem e onde ainda há espaço.
+</p>
+<p class="lede" data-lang="en">
+  Brazil's federal revenue service publishes the country's full business registry,
+  over 60 million establishments. This study filters the ones whose primary activity
+  code is gym and fitness services (CNAE 9313-1/00) and joins them with IBGE
+  population estimates to answer four questions: how fast the market grows, how long
+  a gym lives, when they open, and where there is still room.
+</p>
+
+<p class="aviso">
+  <span data-lang="pt">Foto da base de <span id="ref-pt"></span>. Todos os números vêm do pipeline em Python deste repositório e podem ser reproduzidos com um <code>python main.py</code>.</span>
+  <span data-lang="en">Registry snapshot from <span id="ref-en"></span>. Every number comes from this repository's Python pipeline and can be reproduced with <code>python main.py</code>.</span>
+</p>
+
+<div class="tiles" id="tiles"></div>
+
+<div class="bloco">
+  <h2><span data-lang="pt">O painel de acompanhamento, em Power BI</span><span data-lang="en">The monitoring dashboard, in Power BI</span></h2>
+  <p class="sub">
+    <span data-lang="pt">O estudo reproduzível vive no pipeline em Python, mas quem acompanha mercado no dia a dia precisa de um painel. Este dashboard em Power BI entrega a visão de gestão sobre a mesma base: KPIs dos últimos 12 meses, aberturas contra fechamentos mês a mês, saldo líquido, ranking de estados e cidades e recortes por região, porte e natureza jurídica, com filtro de período.</span>
+    <span data-lang="en">The reproducible study lives in the Python pipeline, but tracking a market day to day calls for a dashboard. This Power BI dashboard delivers the management view on the same base: trailing 12-month KPIs, openings versus closures month by month, net balance, state and city rankings, and breakdowns by region, size and legal nature, with a period filter.</span>
+  </p>
+  <div class="quadro">
+    <a class="painel" href="dashboard_powerbi.jpg" target="_blank" rel="noopener">
+      <img class="painel-img" src="dashboard_powerbi.jpg" width="1580" height="995"
+        alt="Dashboard do radar do mercado fitness em Power BI, com KPIs, aberturas contra fechamentos, saldo mensal e rankings de estados e cidades">
+    </a>
+    <div class="painel-legenda">
+      <span>
+        <span data-lang="pt">dashboard em Power BI · recorte de demonstração</span>
+        <span data-lang="en">Power BI dashboard · demonstration view</span>
+      </span>
+      <span>
+        <span data-lang="pt">clique para abrir em tamanho real</span>
+        <span data-lang="en">click to open full size</span>
+      </span>
+    </div>
+  </div>
+</div>
+
+<div class="bloco">
+  <h2><span data-lang="pt">O mercado dobrou de tamanho em dez anos</span><span data-lang="en">The market doubled in ten years</span></h2>
+  <p class="sub">
+    <span data-lang="pt">Academias abertas e baixadas por ano no Brasil inteiro. A data da baixa é a da situação cadastral, então anos com mutirão de baixa na Receita aparecem como picos de fechamento.</span>
+    <span data-lang="en">Gyms opened and closed per year across Brazil. The closing date is the registry status date, so years when the revenue service ran cleanup sweeps show up as closure spikes.</span>
+  </p>
+  <div class="quadro">
+    <div class="legenda">
+      <span><span class="chip" style="background:var(--abre)"></span><span data-lang="pt">aberturas</span><span data-lang="en">openings</span></span>
+      <span><span class="chip" style="background:var(--fecha)"></span><span data-lang="pt">fechamentos</span><span data-lang="en">closures</span></span>
+    </div>
+    <svg id="g-serie" viewBox="0 0 720 300" role="img" aria-label="Aberturas e fechamentos de academias por ano"></svg>
+    <details>
+      <summary><span data-lang="pt">ver em tabela</span><span data-lang="en">view as table</span></summary>
+      <table id="t-serie"></table>
+    </details>
+  </div>
+</div>
+
+<div class="bloco">
+  <h2><span data-lang="pt">De cada turma anual, quantas seguem vivas</span><span data-lang="en">Of each yearly cohort, how many are still alive</span></h2>
+  <p class="sub">
+    <span data-lang="pt">Cada barra é a turma de academias abertas naquele ano e a fatia dela que continua ativa na foto atual do cadastro. Turmas novas ainda não tiveram tempo de morrer, então a leitura honesta é comparar turmas com a mesma idade em estudos futuros.</span>
+    <span data-lang="en">Each bar is the cohort of gyms opened that year and the share still active in the current registry snapshot. Young cohorts have not had time to die yet, so the honest reading compares same-age cohorts in future studies.</span>
+  </p>
+  <div class="quadro">
+    <svg id="g-coorte" viewBox="0 0 720 280" role="img" aria-label="Sobrevivência por coorte anual"></svg>
+  </div>
+</div>
+
+<div class="bloco">
+  <h2><span data-lang="pt">O pico não é em janeiro</span><span data-lang="en">The peak is not in January</span></h2>
+  <p class="sub">
+    <span data-lang="pt">Fatia das aberturas por mês do ano, somando 2016 a 2025. A intuição do setor aposta em janeiro, pela promessa de ano novo. O cadastro conta outra história: janeiro fica perto da média, o vale é dezembro e o pico de abertura de CNPJ vem depois, no meio do ano.</span>
+    <span data-lang="en">Share of openings by month of the year, 2016 through 2025 combined. Industry intuition bets on January and its new year's resolutions. The registry tells another story: January sits near the average, December is the trough, and the peak in new registrations comes later, mid-year.</span>
+  </p>
+  <div class="quadro">
+    <svg id="g-sazonal" viewBox="0 0 720 260" role="img" aria-label="Aberturas por mês do ano"></svg>
+  </div>
+</div>
+
+<div class="bloco">
+  <h2><span data-lang="pt">Onde o Brasil já treina, por UF</span><span data-lang="en">Where Brazil already works out, by state</span></h2>
+  <p class="sub">
+    <span data-lang="pt">Academias ativas por 100 mil habitantes. O interior rico e as capitais de porte médio puxam a fila; os extremos da lista dizem onde a concorrência é dura e onde a demanda ainda espera oferta.</span>
+    <span data-lang="en">Active gyms per 100k inhabitants. Wealthy countryside and mid-size state capitals lead; the two ends of the list say where competition is fierce and where demand still waits for supply.</span>
+  </p>
+  <div class="quadro">
+    <svg id="g-uf" viewBox="0 0 720 560" role="img" aria-label="Academias ativas por 100 mil habitantes por UF"></svg>
+  </div>
+</div>
+
+<div class="bloco">
+  <h2><span data-lang="pt">O mapa das cidades grandes</span><span data-lang="en">The big-city map</span></h2>
+  <p class="sub">
+    <span data-lang="pt">Entre cidades com 100 mil habitantes ou mais: as que têm mais academias em número absoluto, as mais servidas por 100 mil habitantes e as menos servidas. A última coluna é a que interessa para expansão.</span>
+    <span data-lang="en">Among cities of 100k+ inhabitants: the ones with the most gyms in absolute numbers, the best served per 100k, and the least served. The last column is the one that matters for expansion.</span>
+  </p>
+  <div class="trio">
+    <table id="t-maiores"></table>
+    <table id="t-servidas"></table>
+    <table id="t-vazias"></table>
+  </div>
+</div>
+
+<div class="bloco">
+  <h2><span data-lang="pt">Método e limites</span><span data-lang="en">Method and limits</span></h2>
+  <div class="metodo">
+    <p data-lang="pt">
+      <strong>Fonte.</strong> Dados abertos de CNPJ da Receita Federal, arquivos de
+      estabelecimentos, filtrados pelo CNAE principal 9313-1/00 em streaming, um zip
+      por vez. População por município da estimativa 2025 do IBGE (agregado 6579).
+      O cruzamento é por nome de município normalizado mais UF, porque a Receita usa
+      código próprio de município.
+    </p>
+    <p data-lang="pt">
+      <strong>Limites que valem a pena conhecer.</strong> CNPJ ativo não garante
+      academia em operação, e muitos estúdios pequenos operam como MEI em outros CNAEs
+      ou sem CNPJ. A data de baixa é a da situação cadastral, que pode vir bem depois
+      da porta fechar, e mutirões de baixa da Receita criam picos artificiais de
+      fechamento em anos específicos. Os números medem o cadastro, que é o melhor
+      espelho público do mercado, mas ainda um espelho.
+    </p>
+    <p data-lang="en">
+      <strong>Source.</strong> Brazil's federal revenue service CNPJ open data,
+      establishment files, filtered by primary CNAE 9313-1/00 in streaming, one zip at
+      a time. Municipal population from IBGE's 2025 estimate (aggregate 6579). The
+      join uses normalized city name plus state, because the registry uses its own
+      municipality code.
+    </p>
+    <p data-lang="en">
+      <strong>Limits worth knowing.</strong> An active registration does not guarantee
+      an operating gym, and many small studios run as micro-entrepreneurs under other
+      activity codes or with no registration at all. The closing date is the registry
+      status date, which can lag the actual shutdown, and registry cleanup sweeps
+      create artificial closure spikes in specific years. These numbers measure the
+      registry, which is the best public mirror of the market, but still a mirror.
+    </p>
+  </div>
+</div>
+
+<footer class="colophon">
+  <span>
+    <span data-lang="pt">Radar do mercado fitness · dados abertos da Receita Federal e IBGE</span>
+    <span data-lang="en">Fitness market radar · Receita Federal and IBGE open data</span>
+  </span>
+  <span class="mono">python · pandas · svg</span>
+</footer>
+
+</div>
+
+<div id="dica"></div>
+
+<script src="dados_demo.js"></script>
+<script>
+/* A demo inteira e desenhada aqui, em SVG puro, lendo o que o
+   pipeline Python exportou para dados_demo.js. Nada de framework. */
+
+const D = window.DADOS_RADAR;
+const SVGNS = "http://www.w3.org/2000/svg";
+
+/* idioma: mesmo esquema do site, classe no body e persistencia leve */
+function idiomaAtual() { return document.body.classList.contains("lang-en") ? "en" : "pt"; }
+function trocarIdioma(lang) {
+  document.body.classList.remove("lang-pt", "lang-en");
+  document.body.classList.add("lang-" + lang);
+  document.querySelectorAll("[data-set-lang]").forEach(botao => {
+    botao.classList.toggle("on", botao.dataset.setLang === lang);
+  });
+  try { sessionStorage.setItem("lang", lang); } catch (erro) {}
+  desenharTudo();
+}
+document.querySelectorAll("[data-set-lang]").forEach(botao => {
+  botao.addEventListener("click", () => trocarIdioma(botao.dataset.setLang));
+});
+
+function fmt(numero) {
+  return numero.toLocaleString(idiomaAtual() === "pt" ? "pt-BR" : "en-US");
+}
+
+const MESES = {
+  pt: ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"],
+  en: ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"],
+};
+
+/* dica que segue o mouse */
+const dica = document.getElementById("dica");
+function mostrarDica(evento, html) {
+  dica.innerHTML = html;
+  dica.style.display = "block";
+  const margem = 14;
+  let x = evento.clientX + margem;
+  let y = evento.clientY + margem;
+  const caixa = dica.getBoundingClientRect();
+  if (x + caixa.width > window.innerWidth - 8) x = evento.clientX - caixa.width - margem;
+  if (y + caixa.height > window.innerHeight - 8) y = evento.clientY - caixa.height - margem;
+  dica.style.left = x + "px";
+  dica.style.top = y + "px";
+}
+function esconderDica() { dica.style.display = "none"; }
+
+function el(nome, atributos, pai) {
+  const no = document.createElementNS(SVGNS, nome);
+  for (const chave in atributos) no.setAttribute(chave, atributos[chave]);
+  if (pai) pai.appendChild(no);
+  return no;
+}
+function limpar(svg) { while (svg.firstChild) svg.removeChild(svg.firstChild); }
+
+const COR = {
+  abre: "#0072B2",
+  fecha: "#D55E00",
+  unica: "#0a6847",
+  suave: "#5d6360",
+  grade: "#e2e6e2",
+  eixo: "#b9c0ba",
+  ink: "#191c1a",
+};
+
+/* numeros de capa */
+function desenharTiles() {
+  const lang = idiomaAtual();
+  const geral = D.visao_geral;
+  const vida = D.vida_mediana;
+  const jan = D.sazonalidade[0];
+  const mediaMes = D.sazonalidade.reduce((soma, item) => soma + item.aberturas, 0) / 12;
+  const pico = D.serie_anual.reduce((a, b) => (b.aberturas > a.aberturas ? b : a));
+
+  const tiles = [
+    {
+      valor: fmt(geral.ativas),
+      pt: "academias ativas hoje",
+      en: "gyms active today",
+    },
+    {
+      valor: fmt(geral.total_registros),
+      pt: "CNPJs de academia já criados",
+      en: "gym registrations ever created",
+    },
+    {
+      valor: vida.mediana_anos.toLocaleString(lang === "pt" ? "pt-BR" : "en-US") + (lang === "pt" ? " anos" : " yrs"),
+      pt: "vida mediana das que fecharam",
+      en: "median lifespan of closed ones",
+    },
+    {
+      valor: (jan.aberturas / mediaMes).toLocaleString(lang === "pt" ? "pt-BR" : "en-US", { maximumFractionDigits: 2 }) + "×",
+      pt: "janeiro sobre a média mensal",
+      en: "january vs the monthly average",
+    },
+    {
+      valor: fmt(pico.aberturas),
+      pt: "aberturas no pico, em " + pico.ano,
+      en: "openings at the " + pico.ano + " peak",
+    },
+  ];
+
+  const caixa = document.getElementById("tiles");
+  caixa.innerHTML = "";
+  for (const tile of tiles) {
+    const div = document.createElement("div");
+    div.className = "tile";
+    div.innerHTML = `<div class="valor">${tile.valor}</div>` +
+      `<div class="rotulo">${lang === "pt" ? tile.pt : tile.en}</div>`;
+    caixa.appendChild(div);
+  }
+}
+
+/* grafico 1: linhas de aberturas e fechamentos por ano */
+function desenharSerie() {
+  const svg = document.getElementById("g-serie");
+  limpar(svg);
+  const serie = D.serie_anual;
+  const margem = { esq: 56, dir: 16, topo: 14, base: 34 };
+  const largura = 720 - margem.esq - margem.dir;
+  const altura = 300 - margem.topo - margem.base;
+
+  const maximo = Math.max(...serie.map(item => Math.max(item.aberturas, item.fechamentos)));
+  const teto = Math.ceil(maximo / 2000) * 2000;
+  const x = ano => margem.esq + (ano - serie[0].ano) / (serie.length - 1) * largura;
+  const y = valor => margem.topo + altura - valor / teto * altura;
+
+  for (let nivel = 0; nivel <= 4; nivel++) {
+    const valor = teto / 4 * nivel;
+    el("line", { x1: margem.esq, x2: margem.esq + largura, y1: y(valor), y2: y(valor), stroke: COR.grade, "stroke-width": 1 }, svg);
+    const rotulo = el("text", { x: margem.esq - 8, y: y(valor) + 4, "text-anchor": "end", "font-size": 11, fill: COR.suave, "font-family": "IBM Plex Mono, monospace" }, svg);
+    rotulo.textContent = valor >= 1000 ? (valor / 1000) + "k" : valor;
+  }
+  for (const ano of serie.map(item => item.ano).filter(ano => ano % 5 === 0)) {
+    const rotulo = el("text", { x: x(ano), y: margem.topo + altura + 20, "text-anchor": "middle", "font-size": 11, fill: COR.suave, "font-family": "IBM Plex Mono, monospace" }, svg);
+    rotulo.textContent = ano;
+  }
+
+  for (const chave of ["aberturas", "fechamentos"]) {
+    const pontos = serie.map(item => `${x(item.ano)},${y(item[chave])}`).join(" ");
+    el("polyline", { points: pontos, fill: "none", stroke: chave === "aberturas" ? COR.abre : COR.fecha, "stroke-width": 2, "stroke-linejoin": "round" }, svg);
+  }
+
+  /* crosshair com dica, uma area transparente que acha o ano mais proximo */
+  const cruz = el("line", { y1: margem.topo, y2: margem.topo + altura, stroke: COR.eixo, "stroke-width": 1, visibility: "hidden" }, svg);
+  const marcas = [
+    el("circle", { r: 4, fill: COR.abre, stroke: "#fff", "stroke-width": 2, visibility: "hidden" }, svg),
+    el("circle", { r: 4, fill: COR.fecha, stroke: "#fff", "stroke-width": 2, visibility: "hidden" }, svg),
+  ];
+  const alvo = el("rect", { x: margem.esq, y: margem.topo, width: largura, height: altura, fill: "transparent" }, svg);
+  alvo.addEventListener("mousemove", evento => {
+    const caixa = svg.getBoundingClientRect();
+    const escala = 720 / caixa.width;
+    const posicao = (evento.clientX - caixa.left) * escala;
+    const indice = Math.round((posicao - margem.esq) / largura * (serie.length - 1));
+    const item = serie[Math.max(0, Math.min(serie.length - 1, indice))];
+    cruz.setAttribute("x1", x(item.ano));
+    cruz.setAttribute("x2", x(item.ano));
+    cruz.setAttribute("visibility", "visible");
+    marcas[0].setAttribute("cx", x(item.ano));
+    marcas[0].setAttribute("cy", y(item.aberturas));
+    marcas[1].setAttribute("cx", x(item.ano));
+    marcas[1].setAttribute("cy", y(item.fechamentos));
+    marcas.forEach(marca => marca.setAttribute("visibility", "visible"));
+    const lang = idiomaAtual();
+    mostrarDica(evento, `<strong>${item.ano}</strong><br>` +
+      (lang === "pt" ? "aberturas" : "openings") + `: ${fmt(item.aberturas)}<br>` +
+      (lang === "pt" ? "fechamentos" : "closures") + `: ${fmt(item.fechamentos)}<br>` +
+      (lang === "pt" ? "saldo" : "net") + `: ${item.saldo >= 0 ? "+" : ""}${fmt(item.saldo)}`);
+  });
+  alvo.addEventListener("mouseleave", () => {
+    esconderDica();
+    cruz.setAttribute("visibility", "hidden");
+    marcas.forEach(marca => marca.setAttribute("visibility", "hidden"));
+  });
+
+  /* tabela equivalente, para leitura sem grafico */
+  const lang = idiomaAtual();
+  const tabela = document.getElementById("t-serie");
+  const cab = lang === "pt"
+    ? ["ano", "aberturas", "fechamentos", "saldo"]
+    : ["year", "openings", "closures", "net"];
+  tabela.innerHTML = "<tr>" + cab.map((titulo, indice) =>
+    `<th${indice ? ' class="num"' : ""}>${titulo}</th>`).join("") + "</tr>" +
+    serie.map(item => `<tr><td>${item.ano}</td><td class="num">${fmt(item.aberturas)}</td>` +
+      `<td class="num">${fmt(item.fechamentos)}</td><td class="num">${item.saldo >= 0 ? "+" : ""}${fmt(item.saldo)}</td></tr>`).join("");
+}
+
+/* grafico 2: barras de sobrevivencia por coorte */
+function desenharCoortes() {
+  const svg = document.getElementById("g-coorte");
+  limpar(svg);
+  const coortes = D.sobrevivencia;
+  const margem = { esq: 56, dir: 16, topo: 14, base: 34 };
+  const largura = 720 - margem.esq - margem.dir;
+  const altura = 280 - margem.topo - margem.base;
+  const passo = largura / coortes.length;
+  const y = valor => margem.topo + altura - valor / 100 * altura;
+
+  for (let nivel = 0; nivel <= 4; nivel++) {
+    const valor = 25 * nivel;
+    el("line", { x1: margem.esq, x2: margem.esq + largura, y1: y(valor), y2: y(valor), stroke: COR.grade, "stroke-width": 1 }, svg);
+    const rotulo = el("text", { x: margem.esq - 8, y: y(valor) + 4, "text-anchor": "end", "font-size": 11, fill: COR.suave, "font-family": "IBM Plex Mono, monospace" }, svg);
+    rotulo.textContent = valor + "%";
+  }
+
+  const lang = idiomaAtual();
+  coortes.forEach((item, indice) => {
+    const valor = 100 * (item.sobrevivencia || 0);
+    const xBarra = margem.esq + indice * passo + passo * 0.14;
+    const barra = el("rect", {
+      x: xBarra, y: y(valor),
+      width: passo * 0.72, height: margem.topo + altura - y(valor),
+      fill: COR.unica, rx: 2,
+    }, svg);
+    const rotulo = el("text", { x: xBarra + passo * 0.36, y: margem.topo + altura + 20, "text-anchor": "middle", "font-size": 10.5, fill: COR.suave, "font-family": "IBM Plex Mono, monospace" }, svg);
+    rotulo.textContent = String(item.ano).slice(2);
+    barra.addEventListener("mousemove", evento => mostrarDica(evento,
+      `<strong>${item.ano}</strong><br>` +
+      (lang === "pt" ? "abertas" : "opened") + `: ${fmt(item.abertas)}<br>` +
+      (lang === "pt" ? "ativas hoje" : "active today") + `: ${fmt(item.ativas_hoje)} (${valor.toFixed(1)}%)`));
+    barra.addEventListener("mouseleave", esconderDica);
+  });
+}
+
+/* grafico 3: sazonalidade mensal */
+function desenharSazonalidade() {
+  const svg = document.getElementById("g-sazonal");
+  limpar(svg);
+  const meses = D.sazonalidade;
+  const margem = { esq: 56, dir: 16, topo: 22, base: 34 };
+  const largura = 720 - margem.esq - margem.dir;
+  const altura = 260 - margem.topo - margem.base;
+  const passo = largura / 12;
+  const maximo = Math.max(...meses.map(item => 100 * item.fracao));
+  const teto = Math.ceil(maximo / 4) * 4;
+  const y = valor => margem.topo + altura - valor / teto * altura;
+
+  for (let nivel = 0; nivel <= 4; nivel++) {
+    const valor = teto / 4 * nivel;
+    el("line", { x1: margem.esq, x2: margem.esq + largura, y1: y(valor), y2: y(valor), stroke: COR.grade, "stroke-width": 1 }, svg);
+    const rotulo = el("text", { x: margem.esq - 8, y: y(valor) + 4, "text-anchor": "end", "font-size": 11, fill: COR.suave, "font-family": "IBM Plex Mono, monospace" }, svg);
+    rotulo.textContent = valor.toFixed(0) + "%";
+  }
+
+  const lang = idiomaAtual();
+  meses.forEach((item, indice) => {
+    const valor = 100 * item.fracao;
+    const xBarra = margem.esq + indice * passo + passo * 0.14;
+    const destaque = valor === maximo;
+    const barra = el("rect", {
+      x: xBarra, y: y(valor),
+      width: passo * 0.72, height: margem.topo + altura - y(valor),
+      fill: COR.unica, opacity: destaque ? 1 : 0.62, rx: 2,
+    }, svg);
+    if (destaque) {
+      const rotulo = el("text", { x: xBarra + passo * 0.36, y: y(valor) - 7, "text-anchor": "middle", "font-size": 11.5, fill: COR.ink, "font-family": "IBM Plex Mono, monospace", "font-weight": 600 }, svg);
+      rotulo.textContent = valor.toFixed(1) + "%";
+    }
+    const rotulo = el("text", { x: xBarra + passo * 0.36, y: margem.topo + altura + 20, "text-anchor": "middle", "font-size": 10.5, fill: COR.suave, "font-family": "IBM Plex Mono, monospace" }, svg);
+    rotulo.textContent = MESES[lang][indice];
+    barra.addEventListener("mousemove", evento => mostrarDica(evento,
+      `<strong>${MESES[lang][indice]}</strong><br>` +
+      (lang === "pt" ? "aberturas" : "openings") + `: ${fmt(item.aberturas)}<br>` +
+      (lang === "pt" ? "fatia do ano" : "share of year") + `: ${valor.toFixed(1)}%`));
+    barra.addEventListener("mouseleave", esconderDica);
+  });
+}
+
+/* grafico 4: barras horizontais por UF */
+function desenharUf() {
+  const svg = document.getElementById("g-uf");
+  limpar(svg);
+  const ufs = D.por_uf;
+  const margem = { esq: 56, dir: 70, topo: 8, base: 26 };
+  const largura = 720 - margem.esq - margem.dir;
+  const alturaTotal = margem.topo + ufs.length * 19 + margem.base;
+  svg.setAttribute("viewBox", `0 0 720 ${alturaTotal}`);
+  const maximo = Math.max(...ufs.map(item => item.por_100k));
+  const comprimento = valor => valor / maximo * largura;
+
+  const lang = idiomaAtual();
+  ufs.forEach((item, indice) => {
+    const yBarra = margem.topo + indice * 19;
+    const rotulo = el("text", { x: margem.esq - 10, y: yBarra + 11, "text-anchor": "end", "font-size": 11, fill: COR.ink, "font-family": "IBM Plex Mono, monospace" }, svg);
+    rotulo.textContent = item.uf;
+    const barra = el("rect", { x: margem.esq, y: yBarra, width: comprimento(item.por_100k), height: 13, fill: COR.unica, rx: 2 }, svg);
+    const valorRotulo = el("text", { x: margem.esq + comprimento(item.por_100k) + 8, y: yBarra + 11, "font-size": 11, fill: COR.suave, "font-family": "IBM Plex Mono, monospace" }, svg);
+    valorRotulo.textContent = item.por_100k.toLocaleString(lang === "pt" ? "pt-BR" : "en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    barra.addEventListener("mousemove", evento => mostrarDica(evento,
+      `<strong>${item.uf}</strong><br>` +
+      (lang === "pt" ? "ativas" : "active") + `: ${fmt(item.ativas)}<br>` +
+      (lang === "pt" ? "por 100 mil hab." : "per 100k people") + `: ${item.por_100k.toLocaleString(lang === "pt" ? "pt-BR" : "en-US", { minimumFractionDigits: 1 })}<br>` +
+      (lang === "pt" ? "abertas de 2021 pra cá" : "opened since 2021") + `: ${(100 * item.fracao_recente).toFixed(0)}%`));
+    barra.addEventListener("mouseleave", esconderDica);
+  });
+}
+
+/* tabelas de cidades */
+function desenharCidades() {
+  const lang = idiomaAtual();
+  const dados = D.por_municipio;
+
+  function preencher(id, titulo, linhas, colunaFinal) {
+    const tabela = document.getElementById(id);
+    tabela.innerHTML = `<caption>${titulo}</caption>` +
+      `<tr><th>${lang === "pt" ? "cidade" : "city"}</th>` +
+      `<th class="num">${lang === "pt" ? "ativas" : "active"}</th>` +
+      `<th class="num">${colunaFinal}</th></tr>` +
+      linhas.map(item =>
+        `<tr><td>${item.cidade} <span class="mono" style="color:var(--soft)">${item.uf}</span></td>` +
+        `<td class="num">${fmt(item.ativas)}</td>` +
+        `<td class="num">${item.por_100k.toLocaleString(lang === "pt" ? "pt-BR" : "en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}</td></tr>`).join("");
+  }
+
+  const por100k = lang === "pt" ? "por 100k" : "per 100k";
+  preencher("t-maiores", lang === "pt" ? "mais academias" : "most gyms", dados.mais_academias.slice(0, 10), por100k);
+  preencher("t-servidas", lang === "pt" ? "mais servidas (100k+ hab.)" : "best served (100k+ people)", dados.mais_servidas.slice(0, 10), por100k);
+  preencher("t-vazias", lang === "pt" ? "menos servidas (100k+ hab.)" : "least served (100k+ people)", dados.menos_servidas.slice(0, 10), por100k);
+}
+
+function desenharTudo() {
+  if (!D) return;
+  document.getElementById("ref-pt").textContent = D.referencia;
+  document.getElementById("ref-en").textContent = D.referencia;
+  desenharTiles();
+  desenharSerie();
+  desenharCoortes();
+  desenharSazonalidade();
+  desenharUf();
+  desenharCidades();
+}
+
+/* idioma inicial: o que a pessoa escolheu no site, se escolheu */
+let lingua = "pt";
+try { lingua = sessionStorage.getItem("lang") || "pt"; } catch (erro) {}
+trocarIdioma(lingua);
+</script>
+</body>
+</html>

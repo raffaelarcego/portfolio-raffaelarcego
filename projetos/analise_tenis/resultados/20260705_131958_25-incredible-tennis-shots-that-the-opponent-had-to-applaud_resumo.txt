@@ -1,0 +1,32 @@
+RELATORIO DE ANALISE DA PARTIDA
+Video analisado: 25-incredible-tennis-shots-that-the-opponent-had-to-applaud
+Data da analise: 05/07/2026 13:19
+Duracao analisada: 606.0 segundos
+
+Jogador 1 (lado de baixo da tela)
+  Distancia percorrida: 416.2 metros
+  Velocidade media: 25.0 km/h
+  Velocidade maxima: 91.2 km/h
+  Presenca na deteccao: 18% dos quadros
+  Zonas preferidas na quadra:
+    Zona 1: 34% do tempo
+    Zona 2: 33% do tempo
+    Zona 3: 32% do tempo
+
+Jogador 2 (lado de cima da tela)
+  Distancia percorrida: 826.4 metros
+  Velocidade media: 31.2 km/h
+  Velocidade maxima: 96.6 km/h
+  Presenca na deteccao: 36% dos quadros
+  Zonas preferidas na quadra:
+    Zona 1: 41% do tempo
+    Zona 2: 30% do tempo
+    Zona 3: 29% do tempo
+
+Pontos disputados (estimado por machine learning)
+  Quantidade de pontos: 5
+  Duracao media dos pontos: 1.2 segundos
+  Ponto mais longo: 1.6 segundos
+
+Observacao: as distancias em metros sao estimativas baseadas
+nas dimensoes oficiais da quadra de tenis.

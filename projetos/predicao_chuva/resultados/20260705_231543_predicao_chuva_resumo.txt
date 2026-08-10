@@ -1,0 +1,68 @@
+RELATORIO DO PREVISOR DE CHUVA POR TELEMETRIA DE SATELITE
+Data da avaliacao: 05/07/2026 23:15
+
+Dados
+  Treino: 420000 minutos, 53% com chuva
+  Validacao: 90000 minutos, 54% com chuva
+  Teste: 90000 minutos, 54% com chuva
+
+Deteccao do evento de chuva (teste)
+  F1: 0.9972
+  Precisao: 0.9957
+  Revocacao: 0.9987
+  Limiar de decisao escolhido na validacao: 0.70
+
+Intensidade da chuva em mm/h (teste)
+  Em todos os minutos, comparavel aos baselines:
+    RMSE: 0.481   MAE: 0.196   R2: 0.9953
+  So nos minutos com chuva de verdade, a leitura honesta:
+    RMSE: 0.652   MAE: 0.360
+
+Comparacao com os baselines que acompanham o dataset
+                                           F1     RMSE      MAE
+  Inversao analitica ITU-R             0.7695     5.04        -
+  Baseline XGBoost do dataset          0.9999     0.41     0.08
+  Este pipeline                        0.9972     0.48     0.20
+  Os baselines usam o conjunto completo de features, que inclui
+  as colunas de atenuacao vazadas. A tabela fica como referencia,
+  nao como disputa justa: este pipeline joga sem elas.
+
+Quanto cada estagio de features acrescenta (validacao)
+                                                 F1     RMSE
+  so fisica do enlace (A)                    0.9818     1.26
+  fisica e dinamica do sinal (A+B)           0.9948     1.01
+  completo com coeficientes ITU (A+B+C)      0.9949     1.00
+
+Features mais importantes por ganho, modelo de deteccao
+  snr_roll_std_5min                    1920.4
+  snr_roll_std_30min                    301.0
+  snr_delta                             284.2
+  gaseous_attenuation_db                 87.9
+  rain_height_km                         67.6
+  frequency_ghz                          28.6
+  received_snr_db                        28.6
+  carrier_frequency_ghz                  25.7
+  fspl_db                                15.8
+  snr_roll_mean_30min                    14.8
+
+Features mais importantes por ganho, modelo de intensidade
+  frequency_ghz                       61832.6
+  received_snr_db                     17219.4
+  climate                             11678.6
+  station                             10255.7
+  carrier_frequency_ghz                9378.0
+  fspl_db                              8511.0
+  snr_roll_std_5min                    7408.3
+  gaseous_attenuation_db               3021.3
+  snr_delta                            2230.1
+  rain_height_km                       1040.4
+
+As colunas de atenuacao do dataset sao a formula ITU-R P.838
+aplicada na propria taxa de chuva, quase sem ruido: inverter a
+formula em uma linha recupera o alvo com RMSE de 0.03 mm/h.
+Este pipeline exclui essas colunas de proposito e le apenas o
+SNR ruidoso e a geometria do enlace. Os numeros acima medem
+previsao de verdade: separar a queda causada pela chuva do
+ruido de cintilacao do proprio sinal.
+
+Dados: Rain Narrowcasting Benchmark (RainCast), de Satyansh Gaur.

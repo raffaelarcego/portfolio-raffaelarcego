@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Predição de Chuva por Satélite — Demonstração</title>
+<meta name="description" content="Demonstração interativa do previsor de chuva que lê a telemetria de um enlace de satélite.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* mesmo vocabulario visual do portfolio: fundo liso, mono
+   para rotulos e numeros, verde de terminal como acento unico */
+:root {
+  --bg: #f7f8f6;
+  --panel: #ffffff;
+  --ink: #191c1a;
+  --soft: #5d6360;
+  --rule: #d4d9d4;
+  --rule-strong: #191c1a;
+  --accent: #0a6847;
+  --accent-dim: #98a09b;
+  --sans: "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
+  --mono: "IBM Plex Mono", Consolas, "Courier New", monospace;
+  /* cores do previsto e do real, par validado para daltonismo */
+  --previsto: #0072B2;
+  --real: #D55E00;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 1.02rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: var(--accent); color: #fff; }
+
+/* troca de idioma no mesmo esquema do site: os dois textos existem
+   no HTML e o CSS esconde o idioma que nao esta ativo */
+body.lang-pt [data-lang="en"] { display: none !important; }
+body.lang-en [data-lang="pt"] { display: none !important; }
+
+a { color: inherit; text-decoration-color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--accent); }
+
+.mono {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.sheet { max-width: 72rem; margin: 0 auto; padding: 0 clamp(1.2rem, 4vw, 3rem) 4rem; }
+
+/* barra do topo com o caminho de volta e a troca de idioma */
+.topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 1.6rem 0 0.9rem;
+  border-bottom: 1px solid var(--rule-strong);
+}
+.topo .volta { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.06em; }
+.lang-switch button {
+  border: 1px solid var(--rule);
+  background: var(--panel);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0.55rem;
+  cursor: pointer;
+  color: var(--soft);
+}
+.lang-switch button.on { border-color: var(--accent); color: var(--accent); }
+
+.kicker { color: var(--soft); margin: 2.4rem 0 0.6rem; }
+.kicker .no { color: var(--accent); margin-right: 0.6rem; }
+
+h1.display {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: clamp(1.4rem, 3vw, 2.1rem);
+  line-height: 1.35;
+  margin: 0 0 1rem;
+  max-width: 34ch;
+}
+h1.display em { font-style: normal; color: var(--accent); }
+
+.lede { color: var(--soft); max-width: 62ch; margin: 0 0 0.6rem; }
+
+.aviso {
+  border-left: 2px solid var(--accent);
+  padding-left: 0.9rem;
+  color: var(--soft);
+  font-size: 0.92rem;
+  max-width: 62ch;
+  margin: 1rem 0 2.2rem;
+}
+
+/* controles da reproducao */
+.controles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 0.8rem;
+}
+.controles button {
+  border: 1px solid var(--rule-strong);
+  background: var(--panel);
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.45rem 0.9rem;
+  cursor: pointer;
+}
+.controles button:hover { border-color: var(--accent); color: var(--accent); }
+
+.situacao {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+.situacao .ativo { color: var(--accent); font-weight: 600; }
+
+/* o palco da reproducao */
+#tela {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--rule-strong);
+  background: #fdfdfc;
+}
+.legenda-tela {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--soft);
+  margin: 0.45rem 0 0;
+}
+
+/* painel de leitura ao vivo */
+.estatisticas { margin-top: 2.6rem; }
+.estatisticas h2 {
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin: 0 0 1.2rem;
+  padding-top: 1.2rem;
+  border-top: 2px solid var(--rule-strong);
+}
+
+.grade-cartoes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.4rem;
+}
+.cartao {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  padding: 1.1rem 1.2rem 1.2rem;
+}
+.cartao .quem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0 0 0.8rem;
+}
+.cartao .cor { width: 10px; height: 10px; display: inline-block; }
+.numeros { display: flex; gap: 1.6rem; flex-wrap: wrap; }
+.numeros .bloco .valor {
+  font-family: var(--mono);
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.numeros .bloco .rotulo {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+
+/* o estado grande, chovendo ou seco, pela leitura do modelo */
+#estado-chuva {
+  font-family: var(--mono);
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+#estado-chuva.chovendo { color: var(--previsto); }
+#estado-real { font-size: 0.85rem; color: var(--soft); margin: 0.2rem 0 0.8rem; }
+
+/* medidor da probabilidade do classificador */
+.medidor .trilho { background: var(--bg); border: 1px solid var(--rule); height: 14px; position: relative; }
+.medidor .barra { position: absolute; inset: 2px auto 2px 2px; width: 0%; background: var(--previsto); }
+.medidor .limiar { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink); }
+.medidor .rotulo {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--soft);
+  margin-top: 0.35rem;
+}
+
+footer {
+  margin-top: 3.4rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule-strong);
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  color: var(--soft);
+  font-size: 0.9rem;
+}
+</style>
+</head>
+<body class="lang-pt">
+<div class="sheet">
+
+<header class="topo">
+  <a class="volta" href="../../index.html#projetos">
+    <span data-lang="pt">&larr; voltar ao portfólio</span><span data-lang="en">&larr; back to portfolio</span>
+  </a>
+  <span class="mono">Raffael Michels</span>
+  <div class="lang-switch">
+    <button type="button" data-set-lang="pt">PT</button>
+    <button type="button" data-set-lang="en">EN</button>
+  </div>
+</header>
+
+<p class="kicker mono"><span class="no">01</span>
+  <span data-lang="pt">Predição de chuva · demonstração interativa</span>
+  <span data-lang="en">Rain prediction · interactive demo</span>
+</p>
+
+<h1 class="display">
+  <span data-lang="pt">A chuva, medida <em>pelo sinal do satélite</em>.</span>
+  <span data-lang="en">Rainfall, measured <em>from the satellite signal</em>.</span>
+</h1>
+
+<p class="lede" data-lang="pt">
+  Quando chove, o sinal de um enlace de satélite enfraquece. O sistema real, em
+  Python, lê o SNR ruidoso e a geometria do enlace minuto a minuto e os entrega a
+  dois modelos XGBoost encadeados: um detecta o evento de chuva, o outro estima a
+  intensidade em mm/h. A antena vira um pluviômetro.
+</p>
+<p class="lede" data-lang="en">
+  When it rains, a satellite link's signal weakens. The real system, in Python,
+  reads the link's noisy SNR and geometry minute by minute and feeds them to two
+  chained XGBoost models: one detects the rain event, the other estimates the
+  intensity in mm/h. The antenna becomes a rain gauge.
+</p>
+
+<p class="aviso" data-lang="pt">
+  Tudo abaixo é real: uma fatia do conjunto de teste, com as predições geradas
+  pelo modelo de verdade. A página apenas reproduz, minuto a minuto, o que o
+  enlace mediu e o que o modelo respondeu, sem nunca ter visto esses dados no
+  treino.
+</p>
+<p class="aviso" data-lang="en">
+  Everything below is real: a slice of the test set, with predictions generated
+  by the actual model. The page simply replays, minute by minute, what the link
+  measured and what the model answered, on data it never saw during training.
+</p>
+
+<p class="aviso" id="sem-dados" hidden>
+  <span data-lang="pt">O arquivo de dados da demonstração não foi encontrado. Rode
+    <code>python main.py</code> na pasta do projeto para gerá-lo.</span>
+  <span data-lang="en">The demo data file was not found. Run
+    <code>python main.py</code> in the project folder to generate it.</span>
+</p>
+
+<!-- ===================== REPRODUCAO ===================== -->
+<div class="controles">
+  <button type="button" id="botao-pausa">
+    <span data-lang="pt">Pausar</span><span data-lang="en">Pause</span>
+  </button>
+  <button type="button" id="botao-reinicio">
+    <span data-lang="pt">Reiniciar</span><span data-lang="en">Restart</span>
+  </button>
+  <button type="button" id="botao-velocidade">1x</button>
+  <span class="situacao">
+    <span id="rotulo-enlace"></span>
+    &nbsp;·&nbsp; <span id="relogio">--:--</span> UTC
+    &nbsp;·&nbsp; <span data-lang="pt">minuto</span><span data-lang="en">minute</span> <span id="minuto">0</span>
+  </span>
+</div>
+
+<canvas id="tela" width="1120" height="560"></canvas>
+<p class="legenda-tela">
+  <span data-lang="pt">em cima: SNR e atenuação medidos no enlace</span>
+  <span data-lang="en">top: SNR and attenuation measured on the link</span>
+  <span data-lang="pt">embaixo: chuva real e prevista, mm/h</span>
+  <span data-lang="en">bottom: actual and predicted rain, mm/h</span>
+</p>
+
+<!-- ===================== LEITURA AO VIVO ===================== -->
+<section class="estatisticas">
+  <h2><span data-lang="pt">Leitura ao vivo</span><span data-lang="en">Live reading</span></h2>
+
+  <div class="grade-cartoes">
+    <div class="cartao">
+      <p class="quem"><span data-lang="pt">O modelo diz</span><span data-lang="en">The model says</span></p>
+      <div id="estado-chuva">—</div>
+      <p id="estado-real"></p>
+      <div class="medidor">
+        <div class="trilho">
+          <div class="barra" id="barra-probabilidade"></div>
+          <div class="limiar" id="marca-limiar"></div>
+        </div>
+        <p class="rotulo">
+          <span data-lang="pt">probabilidade de chuva · traço é o limiar</span>
+          <span data-lang="en">rain probability · tick marks the threshold</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="cartao">
+      <p class="quem"><span data-lang="pt">Intensidade agora</span><span data-lang="en">Intensity now</span></p>
+      <div class="numeros">
+        <div class="bloco">
+          <div class="valor" style="color: var(--previsto)" id="mm-previsto">0.0</div>
+          <div class="rotulo" data-lang="pt">mm/h previsto</div><div class="rotulo" data-lang="en">mm/h predicted</div>
+        </div>
+        <div class="bloco">
+          <div class="valor" style="color: var(--real)" id="mm-real">0.0</div>
+          <div class="rotulo" data-lang="pt">mm/h real</div><div class="rotulo" data-lang="en">mm/h actual</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartao">
+      <p class="quem"><span data-lang="pt">Acumulado da janela</span><span data-lang="en">Window total</span></p>
+      <div class="numeros">
+        <div class="bloco">
+          <div class="valor" style="color: var(--previsto)" id="acumulado-previsto">0.0</div>
+          <div class="rotulo" data-lang="pt">mm previstos</div><div class="rotulo" data-lang="en">mm predicted</div>
+        </div>
+        <div class="bloco">
+          <div class="valor" style="color: var(--real)" id="acumulado-real">0.0</div>
+          <div class="rotulo" data-lang="pt">mm reais</div><div class="rotulo" data-lang="en">mm actual</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartao">
+      <p class="quem"><span data-lang="pt">Placar da detecção</span><span data-lang="en">Detection score</span></p>
+      <div class="numeros">
+        <div class="bloco">
+          <div class="valor" id="placar-acertos">0</div>
+          <div class="rotulo" data-lang="pt">minutos certos</div><div class="rotulo" data-lang="en">correct minutes</div>
+        </div>
+        <div class="bloco">
+          <div class="valor" id="placar-alarmes">0</div>
+          <div class="rotulo" data-lang="pt">alarmes falsos</div><div class="rotulo" data-lang="en">false alarms</div>
+        </div>
+        <div class="bloco">
+          <div class="valor" id="placar-perdidas">0</div>
+          <div class="rotulo" data-lang="pt">chuvas perdidas</div><div class="rotulo" data-lang="en">missed rain</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>
+    <span data-lang="pt">Sistema real: Python · XGBoost · pandas. Código na pasta do projeto.</span>
+    <span data-lang="en">Real system: Python · XGBoost · pandas. Code lives in the project folder.</span>
+  </span>
+  <a href="../../index.html#projetos">
+    <span data-lang="pt">&larr; voltar ao portfólio</span><span data-lang="en">&larr; back to portfolio</span>
+  </a>
+</footer>
+
+</div>
+
+<script src="dados_demo.js"></script>
+<script>
+/* =====================================================================
+   Reproducao da janela de teste, minuto a minuto.
+
+   Diferente da demo do projeto de tenis, aqui nada é simulado: o
+   arquivo dados_demo.js traz uma fatia real do conjunto de teste com
+   as predicoes que o modelo XGBoost de verdade gerou. O javascript
+   so avanca um cursor pela serie e desenha o que o enlace mediu e o
+   que o modelo respondeu naquele minuto.
+===================================================================== */
+(function () {
+  "use strict";
+
+  /* ---------- idioma, mesmo esquema do resto do site ---------- */
+
+  var body = document.body;
+
+  function definirIdioma(idioma) {
+    body.classList.remove("lang-pt", "lang-en");
+    body.classList.add(idioma === "en" ? "lang-en" : "lang-pt");
+    document.documentElement.lang = idioma === "en" ? "en-US" : "pt-BR";
+    try { sessionStorage.setItem("lang", idioma); } catch (e) { /* modo privado */ }
+    var botoes = document.querySelectorAll("[data-set-lang]");
+    for (var i = 0; i < botoes.length; i++) {
+      botoes[i].classList.toggle("on", botoes[i].getAttribute("data-set-lang") === idioma);
+    }
+  }
+
+  var botoesIdioma = document.querySelectorAll("[data-set-lang]");
+  for (var bi = 0; bi < botoesIdioma.length; bi++) {
+    botoesIdioma[bi].addEventListener("click", function () {
+      definirIdioma(this.getAttribute("data-set-lang"));
+    });
+  }
+
+  var salvo = null;
+  try { salvo = sessionStorage.getItem("lang"); } catch (e) { /* ignore */ }
+  definirIdioma(salvo === "en" ? "en" : "pt");
+
+  /* ---------- os dados vem do arquivo gerado pelo main.py ---------- */
+
+  if (typeof DADOS_DEMO === "undefined") {
+    document.getElementById("sem-dados").hidden = false;
+    return;
+  }
+
+  var D = DADOS_DEMO;
+  var TOTAL = D.taxa_real.length;
+
+  // o evento de chuva do dataset é taxa acima de 0.1 mm/h
+  var LIMIAR_EVENTO_MM = 0.1;
+
+  // escalas fixas dos graficos, calculadas uma vez sobre a janela
+  // inteira para os eixos nao ficarem pulando durante a reproducao
+  function extremos(vetor) {
+    var minimo = vetor[0], maximo = vetor[0];
+    for (var i = 1; i < vetor.length; i++) {
+      if (vetor[i] < minimo) minimo = vetor[i];
+      if (vetor[i] > maximo) maximo = vetor[i];
+    }
+    return { min: minimo, max: maximo };
+  }
+  var ESCALA_SNR = extremos(D.snr);
+  var ESCALA_ATEN = extremos(D.atenuacao);
+  var ESCALA_CHUVA = Math.max(extremos(D.taxa_real).max, extremos(D.taxa_prevista).max, 1);
+
+  // minuto do dia em que a janela comeca, para os rotulos de hora
+  var inicio = new Date(D.inicio_utc);
+  var MINUTO_INICIAL = inicio.getUTCHours() * 60 + inicio.getUTCMinutes();
+
+  /* ---------- estado da reproducao ---------- */
+
+  // na velocidade 1x a pagina consome 4 minutos de dado por segundo,
+  // a janela inteira leva uns 9 minutos; o botao multiplica isso
+  var MINUTOS_POR_SEGUNDO = 4;
+  var VELOCIDADES = [1, 4, 16];
+
+  var estado;
+
+  function reiniciar() {
+    estado = {
+      cursor: 0,          // posicao continua na serie, em minutos
+      minuto: -1,         // ultimo minuto inteiro ja contabilizado
+      acumuladoReal: 0,   // chuva acumulada em mm
+      acumuladoPrevisto: 0,
+      acertos: 0,         // placar da deteccao, minuto a minuto
+      alarmesFalsos: 0,
+      chuvasPerdidas: 0,
+      pausado: false,
+      indiceVelocidade: 0,
+      terminou: false
+    };
+  }
+  reiniciar();
+
+  /* ---------- avanco do cursor e contabilidade ---------- */
+
+  function contabilizarMinuto(i) {
+    // cada minuto de taxa em mm/h contribui um sessenta avos em mm
+    estado.acumuladoReal += D.taxa_real[i] / 60;
+    estado.acumuladoPrevisto += D.taxa_prevista[i] / 60;
+
+    var choveu = D.taxa_real[i] > LIMIAR_EVENTO_MM;
+    var previu = D.probabilidade[i] >= D.limiar;
+    if (choveu === previu) estado.acertos += 1;
+    else if (previu) estado.alarmesFalsos += 1;
+    else estado.chuvasPerdidas += 1;
+  }
+
+  function atualizar(dt) {
+    if (estado.terminou) return;
+
+    var velocidade = VELOCIDADES[estado.indiceVelocidade];
+    estado.cursor += dt * MINUTOS_POR_SEGUNDO * velocidade;
+
+    var alvo = Math.min(TOTAL - 1, Math.floor(estado.cursor));
+
+    // todos os minutos que o cursor atravessou entram na conta,
+    // mesmo em velocidade alta nenhum minuto fica de fora
+    while (estado.minuto < alvo) {
+      estado.minuto += 1;
+      contabilizarMinuto(estado.minuto);
+    }
+
+    if (estado.cursor >= TOTAL - 1) estado.terminou = true;
+  }
+
+  /* ---------- desenho dos dois paineis no canvas ---------- */
+
+  var tela = document.getElementById("tela");
+  var ctx = tela.getContext("2d");
+  var W = tela.width, H = tela.height;
+
+  // a faixa visivel cobre as ultimas seis horas de telemetria
+  var JANELA_VISIVEL = 360;
+
+  var MARGEM = { esquerda: 52, direita: 14, topo: 10, meio: 26, base: 24 };
+  var ALTURA_SINAL = (H - MARGEM.topo - MARGEM.meio - MARGEM.base) * 0.52;
+  var ALTURA_CHUVA = (H - MARGEM.topo - MARGEM.meio - MARGEM.base) * 0.48;
+  var TOPO_CHUVA = MARGEM.topo + ALTURA_SINAL + MARGEM.meio;
+  var LARGURA_UTIL = W - MARGEM.esquerda - MARGEM.direita;
+
+  var CORES = {
+    fundo: "#fdfdfc",
+    grade: "#e4e8e4",
+    eixo: "#5d6360",
+    snr: "#191c1a",
+    atenuacao: "#98a09b",
+    previsto: "#0072B2",
+    real: "#D55E00",
+    cursor: "#0a6847"
+  };
+
+  function yDoSinal(valor, escala, topo, altura) {
+    var faixa = Math.max(escala.max - escala.min, 0.001);
+    return topo + altura - (valor - escala.min) / faixa * altura;
+  }
+
+  function desenharLinha(vetor, escala, cor, primeiro, ultimo, topo, altura) {
+    ctx.strokeStyle = cor;
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    for (var i = primeiro; i <= ultimo; i++) {
+      var x = MARGEM.esquerda + (i - primeiro) / (JANELA_VISIVEL - 1) * LARGURA_UTIL;
+      var y = yDoSinal(vetor[i], escala, topo, altura);
+      if (i === primeiro) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
+  function rotuloDeHora(indice) {
+    var minutoDoDia = (MINUTO_INICIAL + indice) % 1440;
+    var hora = Math.floor(minutoDoDia / 60);
+    return (hora < 10 ? "0" : "") + hora + ":00";
+  }
+
+  function desenharCena() {
+    ctx.fillStyle = CORES.fundo;
+    ctx.fillRect(0, 0, W, H);
+
+    // a janela desliza: termina no minuto atual e olha seis horas
+    // para tras, preenchendo com o comeco da serie no inicio
+    var ultimo = Math.max(JANELA_VISIVEL - 1, estado.minuto);
+    ultimo = Math.min(ultimo, TOTAL - 1);
+    var primeiro = ultimo - (JANELA_VISIVEL - 1);
+
+    // nada alem do minuto atual aparece: a telemetria chega na tela
+    // conforme o cursor avanca, como num painel de operacao
+    var ate = Math.min(ultimo, Math.max(estado.minuto, primeiro));
+
+    ctx.font = "10px 'IBM Plex Mono', monospace";
+
+    // linhas verticais a cada hora cheia, com o rotulo embaixo
+    for (var i = primeiro; i <= ultimo; i++) {
+      if ((MINUTO_INICIAL + i) % 60 !== 0) continue;
+      var x = MARGEM.esquerda + (i - primeiro) / (JANELA_VISIVEL - 1) * LARGURA_UTIL;
+      ctx.strokeStyle = CORES.grade;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x, MARGEM.topo);
+      ctx.lineTo(x, H - MARGEM.base);
+      ctx.stroke();
+      ctx.fillStyle = CORES.eixo;
+      ctx.fillText(rotuloDeHora(i), x - 13, H - 8);
+    }
+
+    /* painel de cima: o sinal medido no enlace */
+
+    ctx.fillStyle = CORES.eixo;
+    ctx.fillText(ESCALA_SNR.max.toFixed(0) + " dB", 8, MARGEM.topo + 10);
+    ctx.fillText(ESCALA_SNR.min.toFixed(0) + " dB", 8, MARGEM.topo + ALTURA_SINAL);
+
+    desenharLinha(D.snr, ESCALA_SNR, CORES.snr, primeiro, ate, MARGEM.topo, ALTURA_SINAL);
+    desenharLinha(D.atenuacao, ESCALA_ATEN, CORES.atenuacao, primeiro, ate, MARGEM.topo, ALTURA_SINAL);
+
+    /* painel de baixo: chuva real como barras, prevista como linha */
+
+    ctx.fillStyle = CORES.eixo;
+    ctx.fillText(ESCALA_CHUVA.toFixed(0) + " mm/h", 8, TOPO_CHUVA + 10);
+    ctx.fillText("0", 8, TOPO_CHUVA + ALTURA_CHUVA);
+
+    var larguraBarra = LARGURA_UTIL / JANELA_VISIVEL;
+    ctx.fillStyle = CORES.real;
+    ctx.globalAlpha = 0.55;
+    for (var b = primeiro; b <= ate; b++) {
+      var taxa = D.taxa_real[b];
+      if (taxa <= 0) continue;
+      var xb = MARGEM.esquerda + (b - primeiro) / (JANELA_VISIVEL - 1) * LARGURA_UTIL;
+      var alturaBarra = taxa / ESCALA_CHUVA * ALTURA_CHUVA;
+      ctx.fillRect(xb, TOPO_CHUVA + ALTURA_CHUVA - alturaBarra, Math.max(1, larguraBarra), alturaBarra);
+    }
+    ctx.globalAlpha = 1;
+
+    var escalaChuva = { min: 0, max: ESCALA_CHUVA };
+    desenharLinha(D.taxa_prevista, escalaChuva, CORES.previsto, primeiro, ate, TOPO_CHUVA, ALTURA_CHUVA);
+
+    /* o cursor do minuto atual atravessa os dois paineis */
+
+    var indiceCursor = Math.min(Math.max(estado.minuto, primeiro), ultimo);
+    var xCursor = MARGEM.esquerda + (indiceCursor - primeiro) / (JANELA_VISIVEL - 1) * LARGURA_UTIL;
+    ctx.strokeStyle = CORES.cursor;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(xCursor, MARGEM.topo);
+    ctx.lineTo(xCursor, H - MARGEM.base);
+    ctx.stroke();
+
+    /* legenda pequena dentro do painel de cima */
+
+    ctx.fillStyle = CORES.snr;
+    ctx.fillRect(MARGEM.esquerda + 6, MARGEM.topo + 6, 14, 3);
+    ctx.fillStyle = CORES.eixo;
+    ctx.fillText("SNR", MARGEM.esquerda + 25, MARGEM.topo + 12);
+    ctx.fillStyle = CORES.atenuacao;
+    ctx.fillRect(MARGEM.esquerda + 66, MARGEM.topo + 6, 14, 3);
+    ctx.fillStyle = CORES.eixo;
+    var idioma = body.classList.contains("lang-en") ? "en" : "pt";
+    ctx.fillText(idioma === "en" ? "attenuation" : "atenuacao", MARGEM.esquerda + 85, MARGEM.topo + 12);
+  }
+
+  /* ---------- atualizacao dos numeros na pagina ---------- */
+
+  var el = {
+    estado: document.getElementById("estado-chuva"),
+    estadoReal: document.getElementById("estado-real"),
+    barraProb: document.getElementById("barra-probabilidade"),
+    marcaLimiar: document.getElementById("marca-limiar"),
+    mmPrevisto: document.getElementById("mm-previsto"),
+    mmReal: document.getElementById("mm-real"),
+    acumuladoPrevisto: document.getElementById("acumulado-previsto"),
+    acumuladoReal: document.getElementById("acumulado-real"),
+    acertos: document.getElementById("placar-acertos"),
+    alarmes: document.getElementById("placar-alarmes"),
+    perdidas: document.getElementById("placar-perdidas"),
+    enlace: document.getElementById("rotulo-enlace"),
+    relogio: document.getElementById("relogio"),
+    minuto: document.getElementById("minuto")
+  };
+
+  el.enlace.textContent = D.estacao + " · " + D.frequencia_ghz.toFixed(0) + " GHz";
+  el.marcaLimiar.style.left = "calc(" + (D.limiar * 100) + "% - 1px)";
+
+  var TEXTOS = {
+    pt: { chovendo: "CHOVENDO", seco: "SECO", realChuva: "medição real: chovendo", realSeco: "medição real: seco" },
+    en: { chovendo: "RAINING", seco: "DRY", realChuva: "ground truth: raining", realSeco: "ground truth: dry" }
+  };
+
+  function atualizarPainel() {
+    var i = Math.max(0, estado.minuto);
+    var idioma = body.classList.contains("lang-en") ? "en" : "pt";
+    var textos = TEXTOS[idioma];
+
+    var previuChuva = D.probabilidade[i] >= D.limiar;
+    el.estado.textContent = previuChuva ? textos.chovendo : textos.seco;
+    el.estado.classList.toggle("chovendo", previuChuva);
+
+    var choveu = D.taxa_real[i] > LIMIAR_EVENTO_MM;
+    el.estadoReal.textContent = choveu ? textos.realChuva : textos.realSeco;
+
+    el.barraProb.style.width = (D.probabilidade[i] * 100) + "%";
+    el.mmPrevisto.textContent = D.taxa_prevista[i].toFixed(1);
+    el.mmReal.textContent = D.taxa_real[i].toFixed(1);
+    el.acumuladoPrevisto.textContent = estado.acumuladoPrevisto.toFixed(1);
+    el.acumuladoReal.textContent = estado.acumuladoReal.toFixed(1);
+    el.acertos.textContent = estado.acertos;
+    el.alarmes.textContent = estado.alarmesFalsos;
+    el.perdidas.textContent = estado.chuvasPerdidas;
+
+    var minutoDoDia = (MINUTO_INICIAL + i) % 1440;
+    var hora = Math.floor(minutoDoDia / 60);
+    var minuto = minutoDoDia % 60;
+    el.relogio.textContent = (hora < 10 ? "0" : "") + hora + ":" + (minuto < 10 ? "0" : "") + minuto;
+    el.minuto.textContent = (i + 1) + "/" + TOTAL;
+  }
+
+  /* ---------- controles ---------- */
+
+  document.getElementById("botao-pausa").addEventListener("click", function () {
+    estado.pausado = !estado.pausado;
+    var pt = this.querySelector("[data-lang='pt']");
+    var en = this.querySelector("[data-lang='en']");
+    pt.textContent = estado.pausado ? "Continuar" : "Pausar";
+    en.textContent = estado.pausado ? "Resume" : "Pause";
+  });
+
+  document.getElementById("botao-reinicio").addEventListener("click", function () {
+    var pausadoAntes = estado.pausado;
+    var velAntes = estado.indiceVelocidade;
+    reiniciar();
+    estado.pausado = pausadoAntes;
+    estado.indiceVelocidade = velAntes;
+  });
+
+  document.getElementById("botao-velocidade").addEventListener("click", function () {
+    estado.indiceVelocidade = (estado.indiceVelocidade + 1) % VELOCIDADES.length;
+    this.textContent = VELOCIDADES[estado.indiceVelocidade] + "x";
+  });
+
+  /* ---------- laco principal ---------- */
+
+  var ultimoTempo = null;
+
+  function laco(agora) {
+    if (ultimoTempo === null) ultimoTempo = agora;
+    // dt limitado para a reproducao nao dar saltos quando a aba
+    // fica um tempo em segundo plano
+    var dt = Math.min(0.05, (agora - ultimoTempo) / 1000);
+    ultimoTempo = agora;
+
+    if (!estado.pausado) {
+      atualizar(dt);
+      desenharCena();
+      atualizarPainel();
+    }
+
+    requestAnimationFrame(laco);
+  }
+
+  atualizar(0);
+  desenharCena();
+  atualizarPainel();
+  requestAnimationFrame(laco);
+})();
+</script>
+</body>
+</html>

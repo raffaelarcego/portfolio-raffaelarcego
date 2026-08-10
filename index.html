@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Raffael Michels — Data Analyst & Computer Vision</title>
+<meta name="description" content="Raffael Michels, data analyst & computer vision. Portfolio, résumé, and projects.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="lang-pt gate-open">
+
+<!-- ===================== PORTA DE IDIOMA ===================== -->
+<div id="lang-gate" role="dialog" aria-label="Escolha de idioma / Language choice">
+  <div class="gate-top mono">
+    <span>Raffael Michels</span>
+    <span>2026</span>
+  </div>
+  <p class="gate-hint">-- select language;</p>
+  <h1>
+    Escolha o seu idioma.
+    <span class="gate-en">Choose your language.</span>
+  </h1>
+  <div class="gate-options">
+    <button type="button" data-choose="pt">
+      <svg class="flag" width="26" height="18" viewBox="0 0 26 18" aria-hidden="true"><rect width="26" height="18" fill="#009c3b"/><path d="M13 2.2 L23.5 9 L13 15.8 L2.5 9 Z" fill="#fedf00"/><circle cx="13" cy="9" r="3.8" fill="#002776"/><path d="M9.6 8 A6 6 0 0 1 16.4 10.4" fill="none" stroke="#fff" stroke-width="0.7"/></svg>
+      Português <span class="mono">Brasil</span>
+    </button>
+    <button type="button" data-choose="en">
+      <svg class="flag" width="26" height="18" viewBox="0 0 26 18" aria-hidden="true"><rect width="26" height="18" fill="#fff"/><g fill="#b22234"><rect y="0" width="26" height="1.38"/><rect y="2.77" width="26" height="1.38"/><rect y="5.54" width="26" height="1.38"/><rect y="8.31" width="26" height="1.38"/><rect y="11.08" width="26" height="1.38"/><rect y="13.85" width="26" height="1.38"/><rect y="16.62" width="26" height="1.38"/></g><rect width="10.4" height="9.69" fill="#3c3b6e"/><g fill="#fff"><circle cx="1.8" cy="1.7" r="0.5"/><circle cx="5.2" cy="1.7" r="0.5"/><circle cx="8.6" cy="1.7" r="0.5"/><circle cx="3.5" cy="3.6" r="0.5"/><circle cx="6.9" cy="3.6" r="0.5"/><circle cx="1.8" cy="5.5" r="0.5"/><circle cx="5.2" cy="5.5" r="0.5"/><circle cx="8.6" cy="5.5" r="0.5"/><circle cx="3.5" cy="7.4" r="0.5"/><circle cx="6.9" cy="7.4" r="0.5"/></g></svg>
+      English <span class="mono">United States</span>
+    </button>
+  </div>
+</div>
+
+<!-- ===================== CABEÇALHO ===================== -->
+<div class="sheet">
+<header class="masthead">
+  <p class="name">Raffael Michels</p>
+  <span class="role">
+    <span data-lang="pt">Growth Ops / Analista de Dados</span><span data-lang="en">Growth Ops / Data Analyst</span>
+  </span>
+  <nav>
+    <a href="#sobre" data-tab="sobre"><span data-lang="pt">Sobre</span><span data-lang="en">About</span></a>
+    <a href="#projetos" data-tab="projetos"><span data-lang="pt">Projetos</span><span data-lang="en">Projects</span></a>
+    <a href="#curriculo" data-tab="curriculo"><span data-lang="pt">Currículo</span><span data-lang="en">Résumé</span></a>
+    <a href="#carta" data-tab="carta"><span data-lang="pt">Carta</span><span data-lang="en">Cover letter</span></a>
+    <a href="#contato" data-tab="contato"><span data-lang="pt">Contato</span><span data-lang="en">Contact</span></a>
+  </nav>
+  <div class="lang-switch" aria-label="Idioma / Language">
+    <button type="button" data-set-lang="pt" title="Português (Brasil)" aria-label="Português (Brasil)">
+      <svg class="flag" width="24" height="16" viewBox="0 0 26 18" aria-hidden="true"><rect width="26" height="18" fill="#009c3b"/><path d="M13 2.2 L23.5 9 L13 15.8 L2.5 9 Z" fill="#fedf00"/><circle cx="13" cy="9" r="3.8" fill="#002776"/><path d="M9.6 8 A6 6 0 0 1 16.4 10.4" fill="none" stroke="#fff" stroke-width="0.7"/></svg>
+    </button>
+    <button type="button" data-set-lang="en" title="English (US)" aria-label="English (US)">
+      <svg class="flag" width="24" height="16" viewBox="0 0 26 18" aria-hidden="true"><rect width="26" height="18" fill="#fff"/><g fill="#b22234"><rect y="0" width="26" height="1.38"/><rect y="2.77" width="26" height="1.38"/><rect y="5.54" width="26" height="1.38"/><rect y="8.31" width="26" height="1.38"/><rect y="11.08" width="26" height="1.38"/><rect y="13.85" width="26" height="1.38"/><rect y="16.62" width="26" height="1.38"/></g><rect width="10.4" height="9.69" fill="#3c3b6e"/><g fill="#fff"><circle cx="1.8" cy="1.7" r="0.5"/><circle cx="5.2" cy="1.7" r="0.5"/><circle cx="8.6" cy="1.7" r="0.5"/><circle cx="3.5" cy="3.6" r="0.5"/><circle cx="6.9" cy="3.6" r="0.5"/><circle cx="1.8" cy="5.5" r="0.5"/><circle cx="5.2" cy="5.5" r="0.5"/><circle cx="8.6" cy="5.5" r="0.5"/><circle cx="3.5" cy="7.4" r="0.5"/><circle cx="6.9" cy="7.4" r="0.5"/></g></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+
+<!-- ===================== SOBRE ===================== -->
+<section class="tab" id="tab-sobre">
+  <p class="kicker mono"><span class="no">01</span> <span data-lang="pt">Sobre</span><span data-lang="en">About</span></p>
+  <div class="about-grid">
+    <div>
+      <h2 class="display">
+        <span data-lang="pt">Conecto dados, automação e estratégia em <em>decisões</em> que aparecem no resultado.</span>
+        <span data-lang="en">I connect data, automation, and strategy into <em>decisions</em> that show up in the bottom line.</span>
+      </h2>
+      <p class="lede" data-lang="pt">
+        Trabalho com growth marketing ops e análise de dados em SaaS. Atuo na
+        fronteira entre o negócio e a operação: organizo e analiso dados, automatizo
+        processos com ferramentas como Zapier e inteligência artificial, e transformo
+        tudo isso em relatórios e insights que apoiam decisões estratégicas.
+      </p>
+      <p class="lede" data-lang="en">
+        I work with growth marketing ops and data analysis in SaaS. I operate at the
+        border between business and operations: I organize and analyze data, automate
+        processes with tools such as Zapier and artificial intelligence, and turn all
+        of it into reports and insights that support strategic decisions.
+      </p>
+      <p data-lang="pt">
+        O que me interessa não é o gráfico bonito, e sim a pergunta certa. Antes
+        de escrever qualquer consulta, quero saber: qual decisão essa análise vai
+        mudar? Se a resposta é "nenhuma", volto um passo. Essa disciplina veio de
+        vários casos de uso de relatórios impecáveis serem ignorados e números simples,
+        colocados na frente da pessoa certa, mudarem um trimestre inteiro.
+      </p>
+      <p data-lang="en">
+        What interests me is not the pretty chart, but the right question. Before
+        writing any query I ask: which decision will this analysis change? If the
+        answer is "none", I take a step back. That discipline came from a lot of cases of
+        watching flawless reports get ignored and simple numbers, put in front
+        of the right person, turn an entire quarter around.
+      </p>
+      <p data-lang="pt">
+        Fora do trabalho, curso Bacharelado em Engenharia de Software na SATC e
+        mantenho projetos de estudo com dados e machine learning, alguns deles
+        publicados neste portfólio.
+      </p>
+      <p data-lang="en">
+        Outside work, I am pursuing a B.Sc. in Software Engineering at SATC and
+        keep study projects in data and machine learning, some of them published
+        in this portfolio.
+      </p>
+    </div>
+    <div class="side">
+      <figure class="portrait">
+        <img src="assets/raffael-michels.jpg" alt="Retrato de Raffael Michels" width="400" height="400">
+        <figcaption class="mono">
+          <span>raffael-michels.jpg</span>
+          <span>400 × 400</span>
+        </figcaption>
+      </figure>
+      <dl class="facts">
+        <div>
+          <dt data-lang="pt">Base</dt><dt data-lang="en">Based in</dt>
+          <dd data-lang="pt">Santa Catarina, Brasil</dd><dd data-lang="en">Santa Catarina, Brazil</dd>
+        </div>
+        <div>
+          <dt data-lang="pt">Fuso</dt><dt data-lang="en">Timezone</dt>
+          <dd>UTC−3</dd>
+        </div>
+        <div>
+          <dt data-lang="pt">Experiência</dt><dt data-lang="en">Experience</dt>
+          <dd data-lang="pt">1 ano em dados</dd><dd data-lang="en">1 year in data</dd>
+        </div>
+        <div>
+          <dt data-lang="pt">Idiomas</dt><dt data-lang="en">Languages</dt>
+          <dd data-lang="pt">Português, Inglês</dd><dd data-lang="en">Portuguese, English</dd>
+        </div>
+        <div>
+          <dt data-lang="pt">Disponível para</dt><dt data-lang="en">Open to</dt>
+          <dd data-lang="pt"></dd><dd data-lang="en"></dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PROJETOS ===================== -->
+<section class="tab" id="tab-projetos">
+  <p class="kicker mono"><span class="no">02</span> <span data-lang="pt">Projetos selecionados</span><span data-lang="en">Selected projects</span></p>
+  <h2 class="display">
+    <span data-lang="pt">Três projetos, do problema ao <em>número que mudou</em>.</span>
+    <span data-lang="en">Three projects, from problem to <em>the number that moved</em>.</span>
+  </h2>
+
+  <article class="project">
+    <span class="idx">01</span>
+    <div>
+      <h3 data-lang="pt"><a href="projetos/predicao_chuva/demo.html">Chuva medida pelo sinal do satélite</a></h3>
+      <h3 data-lang="en"><a href="projetos/predicao_chuva/demo.html">Rainfall measured from the satellite signal</a></h3>
+      <p class="meta mono">2026 · Python · XGBoost · pandas · matplotlib</p>
+      <p data-lang="pt">
+        Todo enlace de satélite perde sinal quando chove. Em vez de tratar isso
+        como ruído, dois modelos XGBoost encadeados leem o SNR ruidoso e a
+        geometria do enlace minuto a minuto e transformam a antena num
+        pluviômetro: um detecta o evento de chuva, o outro estima a intensidade
+        em mm/h, em 4 estações e 5 frequências. Uma auditoria dos dados
+        descobriu colunas que revelavam o alvo por fórmula, e elas ficaram fora
+        do modelo de propósito.
+      </p>
+      <p data-lang="en">
+        Every satellite link loses signal when it rains. Instead of treating that
+        as noise, two chained XGBoost models read the link's noisy SNR and
+        geometry minute by minute and turn the antenna into a rain gauge: one
+        detects the rain event, the other estimates the intensity in mm/h,
+        across 4 stations and 5 frequencies. A data audit uncovered columns that
+        gave the target away by formula, and they were deliberately left out of
+        the model.
+      </p>
+      <p class="result" data-lang="pt">Resultado: erro de 0,48 mm/h contra 5,04 da inversão analítica das recomendações ITU-R, dez vezes menor, com F1 de 0,997 na detecção do evento, medido em 90 mil minutos de teste que o modelo nunca viu.</p>
+      <p class="result" data-lang="en">Outcome: 0.48 mm/h error versus 5.04 for the analytical inversion of the ITU-R recommendations, ten times lower, with 0.997 F1 on event detection, measured on 90k test minutes the model never saw.</p>
+      <p class="mono"><a href="projetos/predicao_chuva/demo.html">
+        <span data-lang="pt">Ver demonstração interativa &rarr;</span>
+        <span data-lang="en">Open interactive demo &rarr;</span>
+      </a></p>
+    </div>
+    <figure class="chart">
+      <a href="projetos/predicao_chuva/demo.html" aria-label="Abrir demonstração interativa">
+      <svg viewBox="0 0 320 150" role="img" aria-label="Sinal do satélite caindo enquanto a chuva prevista sobe">
+        <line x1="34" y1="14" x2="34" y2="122" stroke="#ccd2cc"/>
+        <line x1="34" y1="122" x2="306" y2="122" stroke="#ccd2cc"/>
+        <text x="12" y="20" font-family="IBM Plex Mono, monospace" font-size="8" fill="#5d6360">dB</text>
+        <text x="8" y="124" font-family="IBM Plex Mono, monospace" font-size="8" fill="#5d6360">mm/h</text>
+        <text x="34" y="136" font-family="IBM Plex Mono, monospace" font-size="8" fill="#5d6360">0h</text>
+        <text x="284" y="136" font-family="IBM Plex Mono, monospace" font-size="8" fill="#5d6360">36h</text>
+        <!-- barras verdes: a chuva prevista pelo modelo -->
+        <g fill="#0a6847">
+          <rect x="106" y="94" width="5" height="28"/>
+          <rect x="113" y="72" width="5" height="50"/>
+          <rect x="120" y="62" width="5" height="60"/>
+          <rect x="127" y="80" width="5" height="42"/>
+          <rect x="134" y="102" width="5" height="20"/>
+          <rect x="216" y="88" width="5" height="34"/>
+          <rect x="223" y="56" width="5" height="66"/>
+          <rect x="230" y="68" width="5" height="54"/>
+          <rect x="237" y="98" width="5" height="24"/>
+        </g>
+        <!-- a linha do SNR faz um vale exatamente onde a chuva aparece -->
+        <polyline points="34,34 70,33 100,34 108,52 116,74 124,80 132,60 140,36 170,33 200,34 214,44 222,84 228,74 236,50 244,35 270,33 306,34"
+          fill="none" stroke="#191c1a" stroke-width="1.6"/>
+        <text x="252" y="60" font-family="IBM Plex Mono, monospace" font-size="8" fill="#0a6847">RMSE 0,30</text>
+        <text x="44" y="46" font-family="IBM Plex Mono, monospace" font-size="8" fill="#98a09b">SNR</text>
+      </svg>
+      </a>
+      <figcaption class="mono">
+        <span data-lang="pt">Sinal caindo, chuva subindo · 36 h de teste</span>
+        <span data-lang="en">Signal dropping, rain rising · 36 h of test data</span>
+      </figcaption>
+    </figure>
+  </article>
+
+  <article class="project">
+    <span class="idx">02</span>
+    <div>
+      <h3 data-lang="pt"><a href="projetos/radar_fitness/demo.html">Radar do mercado fitness brasileiro</a></h3>
+      <h3 data-lang="en"><a href="projetos/radar_fitness/demo.html">Brazilian fitness market radar</a></h3>
+      <p class="meta mono">2026 · Python · pandas · Power BI · dados abertos CNPJ · IBGE</p>
+      <p data-lang="pt">
+        A Receita Federal publica o cadastro de CNPJ inteiro do país, mais de 60
+        milhões de estabelecimentos em 5 GB de arquivos. Um pipeline em Python
+        filtra as academias em streaming (CNAE 9313-1/00), cruza com a população
+        estimada pelo IBGE e responde quatro perguntas de negócio: quanto o mercado
+        cresce, quanto tempo uma academia vive, quando elas abrem e onde ainda
+        há espaço. Um dashboard em Power BI entrega a visão de gestão sobre a
+        mesma base.
+      </p>
+      <p data-lang="en">
+        Brazil's federal revenue service publishes the country's entire business
+        registry, over 60 million establishments across 5 GB of files. A Python
+        pipeline stream-filters the gyms (CNAE 9313-1/00), joins them with IBGE
+        population estimates and answers four business questions: how fast the
+        market grows, how long a gym lives, when they open, and where there is
+        still room. A Power BI dashboard delivers the management view on the
+        same base.
+      </p>
+      <p class="result" data-lang="pt">Resultado: 81,9 mil academias ativas mapeadas, vida mediana de 3,6 anos, pico de aberturas em agosto e não no janeiro do senso comum, e Santa Catarina liderando o país em academias por habitante, com Florianópolis à frente entre as cidades grandes.</p>
+      <p class="result" data-lang="en">Outcome: 81.9k active gyms mapped, a median lifespan of 3.6 years, openings peaking in August rather than the conventional-wisdom January, and Santa Catarina leading the country in gyms per capita, with Florianópolis first among large cities.</p>
+      <p class="mono"><a href="projetos/radar_fitness/demo.html">
+        <span data-lang="pt">Ver demonstração interativa &rarr;</span>
+        <span data-lang="en">Open interactive demo &rarr;</span>
+      </a></p>
+    </div>
+    <figure class="chart">
+      <a href="projetos/radar_fitness/demo.html" aria-label="Abrir demonstração interativa">
+      <svg viewBox="0 0 320 150" role="img" aria-label="Ranking de academias por 100 mil habitantes, topo por UF">
+        <!-- topo do ranking por UF, com SC em destaque -->
+        <text x="20" y="34"  font-family="IBM Plex Mono, monospace" font-size="9" fill="#191c1a">SC</text>
+        <rect x="44" y="26" width="222" height="10" fill="#0a6847"/>
+        <text x="272" y="35" font-family="IBM Plex Mono, monospace" font-size="8" fill="#0a6847">55,2</text>
+        <text x="20" y="56"  font-family="IBM Plex Mono, monospace" font-size="9" fill="#5d6360">DF</text>
+        <rect x="44" y="48" width="214" height="10" fill="#98a09b"/>
+        <text x="20" y="78"  font-family="IBM Plex Mono, monospace" font-size="9" fill="#5d6360">RS</text>
+        <rect x="44" y="70" width="196" height="10" fill="#98a09b"/>
+        <text x="20" y="100" font-family="IBM Plex Mono, monospace" font-size="9" fill="#5d6360">PR</text>
+        <rect x="44" y="92" width="187" height="10" fill="#98a09b"/>
+        <text x="20" y="122" font-family="IBM Plex Mono, monospace" font-size="9" fill="#5d6360">SP</text>
+        <rect x="44" y="114" width="180" height="10" fill="#98a09b"/>
+        <text x="44" y="140" font-family="IBM Plex Mono, monospace" font-size="8" fill="#5d6360">academias por 100 mil hab.</text>
+      </svg>
+      </a>
+      <figcaption class="mono">
+        <span data-lang="pt">Topo do ranking por UF · foto de jun/2026</span>
+        <span data-lang="en">Top of the state ranking · jun/2026 snapshot</span>
+      </figcaption>
+    </figure>
+  </article>
+
+  <article class="project">
+    <span class="idx">03</span>
+    <div>
+      <h3 data-lang="pt"><a href="projetos/analise_tenis/demo.html">Análise de partida de tênis em tempo real</a></h3>
+      <h3 data-lang="en"><a href="projetos/analise_tenis/demo.html">Real-time tennis match analysis</a></h3>
+      <p class="meta mono">2026 · Python · YOLO · OpenCV · scikit-learn</p>
+      <p data-lang="pt">
+        A partir de um vídeo comum de partida, sem nenhum sensor, uma rede neural
+        detecta os jogadores e a bola em cada quadro. Uma homografia converte a
+        imagem em metros reais de quadra, e a tela mostra tudo ao vivo: mini-mapa,
+        distância percorrida, velocidade, mapa de calor e a contagem de pontos,
+        separada por machine learning.
+      </p>
+      <p data-lang="en">
+        From an ordinary match video, with no sensors, a neural network detects
+        the players and the ball in every frame. A homography converts the image
+        into real court meters, and everything shows up live on screen: minimap,
+        distance covered, speed, heatmap, and the point count, separated by
+        machine learning.
+      </p>
+      <p class="result" data-lang="pt">Resultado: estatísticas de nível de transmissão de TV — metros, km/h e ocupação de quadra por jogador — extraídas de vídeo comum, rodando em tempo real numa máquina sem placa de vídeo.</p>
+      <p class="result" data-lang="en">Outcome: broadcast-grade statistics — meters, km/h, and court occupancy per player — extracted from ordinary video, running in real time on a machine with no GPU.</p>
+      <p class="mono"><a href="projetos/analise_tenis/demo.html">
+        <span data-lang="pt">Ver demonstração interativa &rarr;</span>
+        <span data-lang="en">Open interactive demo &rarr;</span>
+      </a></p>
+    </div>
+    <figure class="chart">
+      <a href="projetos/analise_tenis/demo.html" aria-label="Abrir demonstração interativa">
+      <svg viewBox="0 0 320 150" role="img" aria-label="Mini-mapa da quadra com as posições dos jogadores">
+        <!-- quadra vista de cima, deitada, no estilo do mini-mapa -->
+        <rect x="20" y="14" width="280" height="122" fill="#191c1a"/>
+        <g stroke="#e8ece8" stroke-width="1" fill="none">
+          <rect x="44" y="30" width="232" height="90"/>
+          <line x1="44"  y1="41" x2="276" y2="41"/>
+          <line x1="44"  y1="109" x2="276" y2="109"/>
+          <line x1="160" y1="30" x2="160" y2="120"/>
+          <line x1="97"  y1="41" x2="97"  y2="109"/>
+          <line x1="223" y1="41" x2="223" y2="109"/>
+          <line x1="97"  y1="75" x2="223" y2="75"/>
+        </g>
+        <!-- rastro e posicao dos jogadores e da bola -->
+        <circle cx="88"  cy="98" r="2.5" fill="#0a6847" opacity="0.35"/>
+        <circle cx="80"  cy="84" r="2.5" fill="#0a6847" opacity="0.55"/>
+        <circle cx="74"  cy="68" r="4"   fill="#0a6847"/>
+        <circle cx="243" cy="52" r="2.5" fill="#98a09b" opacity="0.5"/>
+        <circle cx="250" cy="66" r="4"   fill="#98a09b"/>
+        <circle cx="190" cy="59" r="2.6" fill="#fedf00"/>
+        <text x="52" y="132" font-family="IBM Plex Mono, monospace" font-size="8" fill="#98a09b">18.7 km/h</text>
+        <text x="212" y="26" font-family="IBM Plex Mono, monospace" font-size="8" fill="#98a09b">62 m</text>
+      </svg>
+      </a>
+      <figcaption class="mono">
+        <span data-lang="pt">Mini-mapa ao vivo, jogadores e bola</span>
+        <span data-lang="en">Live minimap, players and ball</span>
+      </figcaption>
+    </figure>
+  </article>
+</section>
+
+<!-- ===================== CURRÍCULO ===================== -->
+<section class="tab" id="tab-curriculo">
+  <p class="kicker mono"><span class="no">03</span> <span data-lang="pt">Currículo</span><span data-lang="en">Résumé</span></p>
+
+  <div class="cv-actions">
+    <a class="btn" data-lang="pt" href="cv/raffael-michels-curriculo-pt.pdf" download>Baixar em PDF — Português</a>
+    <a class="btn" data-lang="en" href="cv/raffael-michels-resume-en.pdf" download>Download PDF — English</a>
+    <a class="btn ghost" data-lang="pt" href="cv/raffael-michels-resume-en.pdf" download>Versão em inglês (PDF)</a>
+    <a class="btn ghost" data-lang="en" href="cv/raffael-michels-curriculo-pt.pdf" download>Portuguese version (PDF)</a>
+  </div>
+
+  <!-- ---------- CV EM PORTUGUÊS ---------- -->
+  <div class="cv-sheet" data-lang="pt">
+    <header>
+      <h3>Raffael Michels</h3>
+      <p class="cv-contact">
+        Growth Ops / Analista de Dados · Criciúma, Santa Catarina, Brasil (UTC−3) · raffaelarcego@gmail.com<br>
+        linkedin.com/in/raffaelmichels · github.com/raffamichels
+      </p>
+    </header>
+
+    <h4>Resumo</h4>
+    <p>
+      Profissional de dados e operações de growth em SaaS. Atua garantindo que o time
+      de growth marketing opere com mais agilidade, menos fricção e total clareza sobre
+      os dados que realmente importam, conectando dados, automação e estratégia para
+      potencializar resultados. Experiência anterior em análise de dados: tratamento de
+      informações, geração de relatórios e identificação de insights para apoiar decisões
+      estratégicas. Cursando Bacharelado em Engenharia de Software, com base técnica em
+      eletrônica e garantia de qualidade.
+    </p>
+
+    <h4>Experiência</h4>
+    <div class="cv-item">
+      <div class="cv-line"><strong>Growth Ops / Analista de Dados</strong><span class="when">jan 2026 — atual</span></div>
+      <p class="where">Nextfit — SaaS de gestão para negócios fitness · Criciúma, SC</p>
+      <ul>
+        <li>Garanto que o time de growth marketing opere com mais agilidade, menos fricção e total clareza sobre os dados que realmente importam.</li>
+        <li>Conecto dados, automação e estratégia para potencializar os resultados do time, usando ferramentas como Zapier e inteligência artificial.</li>
+        <li>Realizo estudos de negócio conforme a demanda dos projetos.</li>
+        <li>Responsável por manter a infraestrutura das landing pages no ar, com foco em SEO e AEO das páginas.</li>
+      </ul>
+    </div>
+    <div class="cv-item">
+      <div class="cv-line"><strong>Assistente de Análise de Dados</strong><span class="when">nov 2025 — jan 2026</span></div>
+      <p class="where">Nextfit · Criciúma, SC</p>
+      <ul>
+        <li>Organização e análise de dados para apoiar decisões estratégicas.</li>
+        <li>Tratamento de informações, geração de relatórios e identificação de insights que contribuem para a eficiência operacional.</li>
+      </ul>
+    </div>
+    <div class="cv-item">
+      <div class="cv-line"><strong>Suporte em Equipamentos | Customer Success</strong><span class="when">abr 2025 — nov 2025</span></div>
+      <p class="where">Nextfit · Criciúma, SC</p>
+    </div>
+    <div class="cv-item">
+      <div class="cv-line"><strong>Suporte Técnico | Customer Success</strong><span class="when">mar 2025 — abr 2025</span></div>
+      <p class="where">Nextfit · Criciúma, SC</p>
+    </div>
+    <div class="cv-item">
+      <div class="cv-line"><strong>Inspetor de Testes</strong><span class="when">mar 2024 — mar 2025</span></div>
+      <p class="where">Tecnnic · Criciúma, SC</p>
+      <ul>
+        <li>Garantia da qualidade e confiabilidade de sistemas eletrônicos embarcados para implementos rodoviários e equipamentos de movimentação de carga, conduzindo testes.</li>
+      </ul>
+    </div>
+    <div class="cv-item">
+      <div class="cv-line"><strong>Técnico de Montagem</strong><span class="when">mar 2022 — mar 2024</span></div>
+      <p class="where">Tecnnic · Criciúma, SC</p>
+      <ul>
+        <li>Montagem de placas eletrônicas, cabos e chicotes elétricos, garantindo a qualidade e a precisão em cada etapa do processo.</li>
+      </ul>
+    </div>
+
+    <h4>Formação</h4>
+    <div class="cv-item">
+      <div class="cv-line"><strong>Bacharelado em Engenharia de Software</strong><span class="when">ago 2024 — jul 2028 (em andamento)</span></div>
+      <p class="where">SATC — Associação Beneficente da Indústria Carbonífera de Santa Catarina</p>
+    </div>
+    <div class="cv-item">
+      <div class="cv-line"><strong>Curso Técnico em Eletrotécnica</strong><span class="when">2020 — 2021</span></div>
+      <p class="where">SATC — Associação Beneficente da Indústria Carbonífera de Santa Catarina</p>
+    </div>
+
+    <h4>Competências</h4>
+    <ul class="cv-skills">
+      <li>SQL (BigQuery, PostgreSQL) <span class="lvl">avançado</span></li>
+      <li>Python (pandas, scikit-learn, XGBoost) <span class="lvl">avançado</span></li>
+      <li>dbt e modelagem analítica <span class="lvl">intermediário</span></li>
+      <li>Machine learning (algoritmos e modelos preditivos) <span class="lvl">intermediário</span></li>
+      <li>Power BI · Metabase · Looker Studio <span class="lvl">avançado</span></li>
+      <li>Experimentação e testes A/B <span class="lvl">intermediário</span></li>
+      <li>Git, versionamento de análises <span class="lvl">intermediário</span></li>
+      <li>Inglês <span class="lvl">intermediário/avançado — B2</span></li>
+    </ul>
+  </div>
+
+  <!-- ---------- CV EM INGLÊS ---------- -->
+  <div class="cv-sheet" data-lang="en">
+    <header>
+      <h3>Raffael Michels</h3>
+      <p class="cv-contact">
+        Growth Ops / Data Analyst · Criciúma, Santa Catarina, Brazil (UTC−3, EST+2) · raffaelarcego@gmail.com<br>
+        linkedin.com/in/raffaelmichels · github.com/raffamichels
+      </p>
+    </header>
+
+    <h4>Summary</h4>
+    <p>
+      Data and growth operations professional in SaaS. Ensures the growth marketing
+      team operates with more agility, less friction, and full clarity on the data that
+      truly matters, connecting data, automation, and strategy to amplify results.
+      Previous experience in data analysis: data processing, reporting, and surfacing
+      insights to support strategic decisions. Currently pursuing a B.Sc. in Software
+      Engineering, with a technical background in electronics and quality assurance.
+    </p>
+
+    <h4>Experience</h4>
+    <div class="cv-item">
+      <div class="cv-line"><strong>Growth Ops / Data Analyst</strong><span class="when">Jan 2026 — Present</span></div>
+      <p class="where">Nextfit — management SaaS for fitness businesses · Criciúma, Brazil</p>
+      <ul>
+        <li>Ensure the growth marketing team operates with more agility, less friction, and full clarity on the data that truly matters.</li>
+        <li>Connect data, automation, and strategy to amplify the team's results, using tools such as Zapier and artificial intelligence.</li>
+        <li>Conduct business studies on demand for ongoing projects.</li>
+        <li>Responsible for keeping the landing page infrastructure up and running, with a focus on SEO and AEO.</li>
+      </ul>
+    </div>
+    <div class="cv-item">
+      <div class="cv-line"><strong>Data Analysis Assistant</strong><span class="when">Nov 2025 — Jan 2026</span></div>
+      <p class="where">Nextfit · Criciúma, Brazil</p>
+      <ul>
+        <li>Organized and analyzed data to support strategic decisions.</li>
+        <li>Processed information, produced reports, and surfaced insights contributing to operational efficiency.</li>
+      </ul>
+    </div>
+    <div class="cv-item">
+      <div class="cv-line"><strong>Equipment Support | Customer Success</strong><span class="when">Apr 2025 — Nov 2025</span></div>
+      <p class="where">Nextfit · Criciúma, Brazil</p>
+    </div>
+    <div class="cv-item">
+      <div class="cv-line"><strong>Technical Support | Customer Success</strong><span class="when">Mar 2025 — Apr 2025</span></div>
+      <p class="where">Nextfit · Criciúma, Brazil</p>
+    </div>
+    <div class="cv-item">
+      <div class="cv-line"><strong>Test Inspector</strong><span class="when">Mar 2024 — Mar 2025</span></div>
+      <p class="where">Tecnnic · Criciúma, Brazil</p>
+      <ul>
+        <li>Ensured the quality and reliability of embedded electronic systems for road implements and cargo-handling equipment, conducting tests.</li>
+      </ul>
+    </div>
+    <div class="cv-item">
+      <div class="cv-line"><strong>Assembly Technician</strong><span class="when">Mar 2022 — Mar 2024</span></div>
+      <p class="where">Tecnnic · Criciúma, Brazil</p>
+      <ul>
+        <li>Assembled electronic boards, cables, and wiring harnesses, ensuring quality and precision at every step of the process.</li>
+      </ul>
+    </div>
+
+    <h4>Education</h4>
+    <div class="cv-item">
+      <div class="cv-line"><strong>B.Sc. in Software Engineering</strong><span class="when">Aug 2024 — Jul 2028 (in progress)</span></div>
+      <p class="where">SATC — Santa Catarina, Brazil</p>
+    </div>
+    <div class="cv-item">
+      <div class="cv-line"><strong>Technical Degree in Electrotechnics</strong><span class="when">2020 — 2021</span></div>
+      <p class="where">SATC — Santa Catarina, Brazil</p>
+    </div>
+
+    <h4>Skills</h4>
+    <ul class="cv-skills">
+      <li>SQL (BigQuery, PostgreSQL) <span class="lvl">advanced</span></li>
+      <li>Python (pandas, scikit-learn, XGBoost) <span class="lvl">advanced</span></li>
+      <li>dbt &amp; analytical modeling <span class="lvl">intermediate</span></li>
+      <li>Machine learning (algorithms &amp; predictive models) <span class="lvl">intermediate</span></li>
+      <li>Power BI · Metabase · Looker Studio <span class="lvl">advanced</span></li>
+      <li>Experimentation &amp; A/B testing <span class="lvl">intermediate</span></li>
+      <li>Git, versioned analyses <span class="lvl">intermediate</span></li>
+      <li>English <span class="lvl">upper-intermediate — B2</span></li>
+      <li>Portuguese <span class="lvl">native</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== CARTA ===================== -->
+<section class="tab" id="tab-carta">
+  <p class="kicker mono"><span class="no">04</span> <span data-lang="pt">Carta de apresentação</span><span data-lang="en">Cover letter</span></p>
+
+  <div class="cv-actions">
+    <a class="btn" data-lang="pt" href="cv/raffael-michels-carta-pt.pdf" download>Baixar em PDF — Português</a>
+    <a class="btn" data-lang="en" href="cv/raffael-michels-cover-letter-en.pdf" download>Download PDF — English</a>
+    <a class="btn ghost" data-lang="pt" href="cv/raffael-michels-cover-letter-en.pdf" download>Versão em inglês (PDF)</a>
+    <a class="btn ghost" data-lang="en" href="cv/raffael-michels-carta-pt.pdf" download>Portuguese version (PDF)</a>
+  </div>
+
+  <div class="letter" data-lang="pt">
+    <p class="letter-date">Santa Catarina, Brasil</p>
+    <p>Prezada equipe de recrutamento,</p>
+    <p>
+      Trabalho com dados e operações de growth marketing em SaaS. Meu trabalho se
+      resume em uma frase: garantir que os dados certos cheguem à pessoa certa, no
+      formato certo, antes da decisão ser tomada, com o mínimo de fricção no caminho.
+    </p>
+    <p>
+      Na Next fit, um SaaS de gestão para negócios fitness, comecei no suporte técnico
+      e no atendimento de customer success, passei pela análise de dados, tratando
+      informações, gerando relatórios e levantando insights para decisões estratégicas e hoje atuo como Growth Ops / Analista de Dados, conectando dados, automação e estratégia
+      para que o time de growth opere com agilidade e clareza. Antes disso, na Tecnnic,
+      trabalhei com montagem e inspeção de testes de sistemas eletrônicos embarcados,
+      onde aprendi o rigor de garantir qualidade em cada etapa do processo.
+    </p>
+    <p>
+      Procuro um ambiente onde a análise participe da decisão, não apenas a documente.
+      Curso Bacharelado em Engenharia de Software, escrevo com clareza em português e
+      inglês e prefiro entregar cedo e iterar a esperar a análise perfeita.
+    </p>
+    <p>Agradeço a atenção e fico à disposição para conversar.</p>
+    <div class="signature">
+      <p class="sig-name">Raffael Michels</p>
+      <p class="sig-role">raffaelarcego@gmail.com · linkedin.com/in/raffaelmichels</p>
+    </div>
+  </div>
+
+  <div class="letter" data-lang="en">
+    <p class="letter-date">Santa Catarina, Brazil</p>
+    <p>Dear Hiring Team,</p>
+    <p>
+      I work with data and growth marketing operations in SaaS. My work comes down to
+      one sentence: making sure the right data reaches the right person, in the right
+      shape, before the decision is made, with as little friction as possible along
+      the way.
+    </p>
+    <p>
+      At Next fit, a management SaaS for fitness businesses, I started in technical
+      support and customer success, moved into data analysis, processing information,
+      producing reports, and surfacing insights for strategic decisions, and today I
+      work as Growth Ops / Data Analyst, connecting data, automation, and strategy so the
+      growth team operates with agility and clarity. Before that, at Tecnnic, I worked
+      in assembly and test inspection of embedded electronic systems, where I learned
+      the rigor of ensuring quality at every step of the process.
+    </p>
+    <p>
+      I am looking for an environment where analysis takes part in the decision rather
+      than merely documenting it. I am pursuing a B.Sc. in Software Engineering, write
+      clearly in English and Portuguese, and would rather ship early and iterate than
+      wait for the perfect analysis. Being based in Brazil (UTC−3), my working hours
+      overlap almost entirely with US Eastern time.
+    </p>
+    <p>Thank you for your consideration. I would welcome the chance to talk.</p>
+    <div class="signature">
+      <p class="sig-name">Raffael Michels</p>
+      <p class="sig-role">raffaelarcego@gmail.com · linkedin.com/in/raffaelmichels</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CONTATO ===================== -->
+<section class="tab" id="tab-contato">
+  <p class="kicker mono"><span class="no">05</span> <span data-lang="pt">Contato</span><span data-lang="en">Contact</span></p>
+  <h2 class="display">
+    <span data-lang="pt">Uma boa pergunta sobre dados já é <em>motivo suficiente</em> para escrever.</span>
+    <span data-lang="en">A good question about data is <em>reason enough</em> to write.</span>
+  </h2>
+  <div class="contact-list">
+    <a href="mailto:raffaelarcego@gmail.com">
+      <span>raffaelarcego@gmail.com</span>
+      <span class="mono">E-mail</span>
+    </a>
+    <a href="https://www.linkedin.com/in/raffaelmichels" target="_blank" rel="noopener">
+      <span>linkedin.com/in/raffaelmichels</span>
+      <span class="mono">LinkedIn</span>
+    </a>
+    <a href="https://github.com/raffamichels" target="_blank" rel="noopener">
+      <span>github.com/raffamichels</span>
+      <span class="mono">GitHub</span>
+    </a>
+    <div class="row">
+      <span data-lang="pt">Santa Catarina, Brasil — UTC−3</span>
+      <span data-lang="en">Santa Catarina, Brazil — UTC−3</span>
+      <span class="mono" data-lang="pt">Base</span>
+      <span class="mono" data-lang="en">Based in</span>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="colophon">
+  <span>
+    <span data-lang="pt">© 2026 Raffael Michels. Escrito e montado à mão.</span>
+    <span data-lang="en">© 2026 Raffael Michels. Written and set by hand.</span>
+  </span>
+  <span class="mono">ibm plex sans · ibm plex mono</span>
+</footer>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

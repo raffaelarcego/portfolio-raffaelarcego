@@ -1,0 +1,6 @@
+Coloque nesta pasta os videos das partidas que voce quer analisar.
+
+Formatos aceitos: mp4, avi, mov e mkv.
+
+O ideal é que a camera esteja fixa atras da quadra, filmando a quadra
+inteira, como nas transmissoes de TV.

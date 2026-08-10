@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Análise de Tênis em Tempo Real — Demonstração</title>
+<meta name="description" content="Demonstração interativa do sistema de análise de desempenho em partidas de tênis com visão computacional.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* mesmo vocabulario visual do portfolio: fundo liso, mono
+   para rotulos e numeros, verde de terminal como acento unico */
+:root {
+  --bg: #f7f8f6;
+  --panel: #ffffff;
+  --ink: #191c1a;
+  --soft: #5d6360;
+  --rule: #d4d9d4;
+  --rule-strong: #191c1a;
+  --accent: #0a6847;
+  --accent-dim: #98a09b;
+  --sans: "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
+  --mono: "IBM Plex Mono", Consolas, "Courier New", monospace;
+  /* cores de identidade dos jogadores, par validado para daltonismo */
+  --jogador1: #0072B2;
+  --jogador2: #D55E00;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 1.02rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: var(--accent); color: #fff; }
+
+/* troca de idioma no mesmo esquema do site: os dois textos existem
+   no HTML e o CSS esconde o idioma que nao esta ativo */
+body.lang-pt [data-lang="en"] { display: none !important; }
+body.lang-en [data-lang="pt"] { display: none !important; }
+
+a { color: inherit; text-decoration-color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--accent); }
+
+.mono {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.sheet { max-width: 72rem; margin: 0 auto; padding: 0 clamp(1.2rem, 4vw, 3rem) 4rem; }
+
+/* barra do topo com o caminho de volta e a troca de idioma */
+.topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 1.6rem 0 0.9rem;
+  border-bottom: 1px solid var(--rule-strong);
+}
+.topo .volta { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.06em; }
+.lang-switch button {
+  border: 1px solid var(--rule);
+  background: var(--panel);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0.55rem;
+  cursor: pointer;
+  color: var(--soft);
+}
+.lang-switch button.on { border-color: var(--accent); color: var(--accent); }
+
+.kicker { color: var(--soft); margin: 2.4rem 0 0.6rem; }
+.kicker .no { color: var(--accent); margin-right: 0.6rem; }
+
+h1.display {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: clamp(1.4rem, 3vw, 2.1rem);
+  line-height: 1.35;
+  margin: 0 0 1rem;
+  max-width: 34ch;
+}
+h1.display em { font-style: normal; color: var(--accent); }
+
+.lede { color: var(--soft); max-width: 62ch; margin: 0 0 0.6rem; }
+
+.aviso {
+  border-left: 2px solid var(--accent);
+  padding-left: 0.9rem;
+  color: var(--soft);
+  font-size: 0.92rem;
+  max-width: 62ch;
+  margin: 1rem 0 2.2rem;
+}
+
+/* controles da simulacao */
+.controles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 0.8rem;
+}
+.controles button {
+  border: 1px solid var(--rule-strong);
+  background: var(--panel);
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.45rem 0.9rem;
+  cursor: pointer;
+}
+.controles button:hover { border-color: var(--accent); color: var(--accent); }
+
+.situacao {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+.situacao .ativo { color: var(--accent); font-weight: 600; }
+
+/* o palco da simulacao */
+#tela {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--rule-strong);
+  background: #223;
+}
+.legenda-tela {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--soft);
+  margin: 0.45rem 0 0;
+}
+
+/* painel de estatisticas ao vivo */
+.estatisticas { margin-top: 2.6rem; }
+.estatisticas h2 {
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin: 0 0 1.2rem;
+  padding-top: 1.2rem;
+  border-top: 2px solid var(--rule-strong);
+}
+
+.grade-jogadores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.4rem;
+}
+.cartao {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  padding: 1.1rem 1.2rem 1.2rem;
+}
+.cartao .quem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.8rem;
+}
+.cartao .cor { width: 10px; height: 10px; display: inline-block; }
+.numeros { display: flex; gap: 1.6rem; flex-wrap: wrap; }
+.numeros .bloco .valor {
+  font-family: var(--mono);
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.numeros .bloco .rotulo {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+
+/* barra de comparacao de distancia entre os dois jogadores */
+.comparativo { margin-top: 1.4rem; }
+.comparativo .linha { display: grid; grid-template-columns: 5.2rem 1fr 4.5rem; align-items: center; gap: 0.7rem; margin-bottom: 0.45rem; }
+.comparativo .nome { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--soft); }
+.comparativo .trilho { background: var(--panel); border: 1px solid var(--rule); height: 14px; position: relative; }
+.comparativo .barra { position: absolute; inset: 2px auto 2px 2px; width: 0%; }
+.comparativo .metros { font-family: var(--mono); font-size: 0.78rem; text-align: right; }
+
+/* mapas de calor */
+.grade-calor {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.4rem;
+  margin-top: 1.6rem;
+}
+.calor canvas {
+  width: 100%;
+  max-width: 240px;
+  display: block;
+  border: 1px solid var(--rule-strong);
+  background: #17140f;
+}
+.calor .titulo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.calor .nota { font-size: 0.85rem; color: var(--soft); max-width: 34ch; margin-top: 0.5rem; }
+
+footer {
+  margin-top: 3.4rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule-strong);
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  color: var(--soft);
+  font-size: 0.9rem;
+}
+</style>
+</head>
+<body class="lang-pt">
+<div class="sheet">
+
+<header class="topo">
+  <a class="volta" href="../../index.html#projetos">
+    <span data-lang="pt">&larr; voltar ao portfólio</span><span data-lang="en">&larr; back to portfolio</span>
+  </a>
+  <span class="mono">Raffael Michels</span>
+  <div class="lang-switch">
+    <button type="button" data-set-lang="pt">PT</button>
+    <button type="button" data-set-lang="en">EN</button>
+  </div>
+</header>
+
+<p class="kicker mono"><span class="no">04</span>
+  <span data-lang="pt">Análise de tênis · demonstração interativa</span>
+  <span data-lang="en">Tennis analysis · interactive demo</span>
+</p>
+
+<h1 class="display">
+  <span data-lang="pt">Desempenho de uma partida de tênis, medido <em>em tempo real</em>.</span>
+  <span data-lang="en">Tennis match performance, measured <em>in real time</em>.</span>
+</h1>
+
+<p class="lede" data-lang="pt">
+  O sistema real roda em Python: uma rede neural YOLO detecta os jogadores e a
+  bola em cada quadro do vídeo, uma homografia converte a imagem em metros de
+  quadra e as estatísticas saem ao vivo, junto com o mini-mapa e o mapa de calor.
+</p>
+<p class="lede" data-lang="en">
+  The real system runs in Python: a YOLO neural network detects the players and
+  the ball in every video frame, a homography converts the image into court
+  meters, and the statistics come out live, together with the minimap and the
+  heatmap.
+</p>
+
+<p class="aviso" data-lang="pt">
+  O que você vê abaixo é uma recriação fiel da tela do sistema, rodando no
+  navegador com uma partida simulada. Serve para mostrar o comportamento da
+  análise sem precisar processar um vídeo aqui na página.
+</p>
+<p class="aviso" data-lang="en">
+  What you see below is a faithful recreation of the system's screen, running in
+  the browser over a simulated match. It shows how the analysis behaves without
+  processing a video inside this page.
+</p>
+
+<!-- ===================== SIMULACAO ===================== -->
+<div class="controles">
+  <button type="button" id="botao-pausa">
+    <span data-lang="pt">Pausar</span><span data-lang="en">Pause</span>
+  </button>
+  <button type="button" id="botao-reinicio">
+    <span data-lang="pt">Reiniciar</span><span data-lang="en">Restart</span>
+  </button>
+  <button type="button" id="botao-velocidade">1x</button>
+  <span class="situacao">
+    <span id="situacao-ponto"></span>
+    &nbsp;·&nbsp; <span data-lang="pt">pontos</span><span data-lang="en">points</span>: <span id="contador-pontos">0</span>
+    &nbsp;·&nbsp; <span id="relogio">00:00</span>
+  </span>
+</div>
+
+<canvas id="tela" width="1120" height="630"></canvas>
+<p class="legenda-tela">
+  <span data-lang="pt">detecção dos jogadores · pontos da quadra · rastro da bola</span>
+  <span data-lang="en">player detection · court keypoints · ball trail</span>
+  <span data-lang="pt">mini-mapa ao vivo no canto</span>
+  <span data-lang="en">live minimap in the corner</span>
+</p>
+
+<!-- ===================== ESTATISTICAS ===================== -->
+<section class="estatisticas">
+  <h2><span data-lang="pt">Estatísticas em tempo real</span><span data-lang="en">Live statistics</span></h2>
+
+  <div class="grade-jogadores">
+    <div class="cartao">
+      <p class="quem"><span class="cor" style="background: var(--jogador1)"></span>
+        <span data-lang="pt">Jogador 1 · frente</span><span data-lang="en">Player 1 · near side</span>
+      </p>
+      <div class="numeros">
+        <div class="bloco">
+          <div class="valor" id="j1-distancia">0</div>
+          <div class="rotulo" data-lang="pt">metros</div><div class="rotulo" data-lang="en">meters</div>
+        </div>
+        <div class="bloco">
+          <div class="valor" id="j1-velocidade">0.0</div>
+          <div class="rotulo" data-lang="pt">km/h agora</div><div class="rotulo" data-lang="en">km/h now</div>
+        </div>
+        <div class="bloco">
+          <div class="valor" id="j1-maxima">0.0</div>
+          <div class="rotulo" data-lang="pt">km/h máx</div><div class="rotulo" data-lang="en">km/h max</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartao">
+      <p class="quem"><span class="cor" style="background: var(--jogador2)"></span>
+        <span data-lang="pt">Jogador 2 · fundo</span><span data-lang="en">Player 2 · far side</span>
+      </p>
+      <div class="numeros">
+        <div class="bloco">
+          <div class="valor" id="j2-distancia">0</div>
+          <div class="rotulo" data-lang="pt">metros</div><div class="rotulo" data-lang="en">meters</div>
+        </div>
+        <div class="bloco">
+          <div class="valor" id="j2-velocidade">0.0</div>
+          <div class="rotulo" data-lang="pt">km/h agora</div><div class="rotulo" data-lang="en">km/h now</div>
+        </div>
+        <div class="bloco">
+          <div class="valor" id="j2-maxima">0.0</div>
+          <div class="rotulo" data-lang="pt">km/h máx</div><div class="rotulo" data-lang="en">km/h max</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparativo">
+    <div class="linha">
+      <span class="nome" data-lang="pt">Jogador 1</span><span class="nome" data-lang="en">Player 1</span>
+      <div class="trilho"><div class="barra" id="j1-barra" style="background: var(--jogador1)"></div></div>
+      <span class="metros" id="j1-barra-valor">0 m</span>
+    </div>
+    <div class="linha">
+      <span class="nome" data-lang="pt">Jogador 2</span><span class="nome" data-lang="en">Player 2</span>
+      <div class="trilho"><div class="barra" id="j2-barra" style="background: var(--jogador2)"></div></div>
+      <span class="metros" id="j2-barra-valor">0 m</span>
+    </div>
+  </div>
+
+  <div class="grade-calor">
+    <div class="calor">
+      <p class="titulo"><span class="cor" style="background: var(--jogador1); width: 10px; height: 10px; display: inline-block;"></span>
+        <span data-lang="pt">Mapa de calor · Jogador 1</span><span data-lang="en">Heatmap · Player 1</span>
+      </p>
+      <canvas id="calor-j1" width="120" height="240"></canvas>
+    </div>
+    <div class="calor">
+      <p class="titulo"><span class="cor" style="background: var(--jogador2); width: 10px; height: 10px; display: inline-block;"></span>
+        <span data-lang="pt">Mapa de calor · Jogador 2</span><span data-lang="en">Heatmap · Player 2</span>
+      </p>
+      <canvas id="calor-j2" width="120" height="240"></canvas>
+    </div>
+    <div class="calor">
+      <p class="nota" data-lang="pt">
+        Cada mapa mostra a ocupação relativa da quadra vista de cima, das regiões
+        menos visitadas (escuras) às mais visitadas (claras). No sistema real ele
+        se forma da mesma maneira, posição a posição, durante o vídeo.
+      </p>
+      <p class="nota" data-lang="en">
+        Each map shows the relative court occupancy seen from above, from the least
+        visited regions (dark) to the most visited ones (bright). In the real system
+        it builds up the same way, position by position, while the video plays.
+      </p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>
+    <span data-lang="pt">Sistema real: Python · YOLO · OpenCV · scikit-learn. Código na pasta do projeto.</span>
+    <span data-lang="en">Real system: Python · YOLO · OpenCV · scikit-learn. Code lives in the project folder.</span>
+  </span>
+  <a href="../../index.html#projetos">
+    <span data-lang="pt">&larr; voltar ao portfólio</span><span data-lang="en">&larr; back to portfolio</span>
+  </a>
+</footer>
+
+</div>
+
+<script>
+/* =====================================================================
+   Simulacao da analise em tempo real.
+
+   A ideia é reproduzir no navegador exatamente o que o sistema em
+   Python mostra na tela: a quadra em perspectiva, as caixas de
+   deteccao, os pontos de referencia, o rastro da bola, o mini-mapa e
+   as estatisticas se formando ao vivo.
+
+   Tudo aqui trabalha em metros de quadra, igual ao sistema real, e
+   so na hora de desenhar convertemos para pixels. Por isso as
+   distancias e velocidades mostradas sao numeros coerentes de verdade.
+===================================================================== */
+(function () {
+  "use strict";
+
+  /* ---------- idioma, mesmo esquema do resto do site ---------- */
+
+  var body = document.body;
+
+  function definirIdioma(idioma) {
+    body.classList.remove("lang-pt", "lang-en");
+    body.classList.add(idioma === "en" ? "lang-en" : "lang-pt");
+    document.documentElement.lang = idioma === "en" ? "en-US" : "pt-BR";
+    try { sessionStorage.setItem("lang", idioma); } catch (e) { /* modo privado */ }
+    var botoes = document.querySelectorAll("[data-set-lang]");
+    for (var i = 0; i < botoes.length; i++) {
+      botoes[i].classList.toggle("on", botoes[i].getAttribute("data-set-lang") === idioma);
+    }
+  }
+
+  var botoesIdioma = document.querySelectorAll("[data-set-lang]");
+  for (var bi = 0; bi < botoesIdioma.length; bi++) {
+    botoesIdioma[bi].addEventListener("click", function () {
+      definirIdioma(this.getAttribute("data-set-lang"));
+    });
+  }
+
+  var salvo = null;
+  try { salvo = sessionStorage.getItem("lang"); } catch (e) { /* ignore */ }
+  definirIdioma(salvo === "en" ? "en" : "pt");
+
+  /* ---------- medidas da quadra, em metros de verdade ---------- */
+
+  var QUADRA = {
+    largura: 10.97,        // quadra de duplas
+    comprimento: 23.77,
+    recuoSimples: 1.37,    // distancia da lateral de duplas ate a de simples
+    saque: 6.40            // distancia da rede ate a linha de saque
+  };
+
+  /* ---------- projecao em perspectiva ----------
+     transforma metros de quadra em pixels da tela, imitando uma
+     camera atras da quadra. o truque é uma curva que comprime o
+     fundo e alarga a frente, como numa transmissao de TV */
+
+  var VISTA = {
+    fundoY: 0.16,      // altura da linha de fundo distante, fracao da tela
+    frenteY: 0.90,     // altura da linha de fundo proxima
+    fundoMeia: 0.185,  // meia largura da quadra no fundo, fracao da tela
+    frenteMeia: 0.40,  // meia largura na frente
+    persp: 2.3         // forca da perspectiva
+  };
+
+  function projetar(xm, ym, W, H) {
+    var t = ym / QUADRA.comprimento;
+    // curva de perspectiva: comprime o que esta longe
+    var tp = t / (VISTA.persp - (VISTA.persp - 1) * t);
+    var y = (VISTA.fundoY + (VISTA.frenteY - VISTA.fundoY) * tp) * H;
+    var meia = (VISTA.fundoMeia + (VISTA.frenteMeia - VISTA.fundoMeia) * tp) * W;
+    var x = W / 2 + (xm / QUADRA.largura - 0.5) * 2 * meia;
+    return { x: x, y: y, escala: meia * 2 / QUADRA.largura };  // escala em px por metro
+  }
+
+  /* ---------- as linhas e os pontos da quadra ---------- */
+
+  function segmentosDaQuadra() {
+    var e = 0, d = QUADRA.largura;
+    var se = QUADRA.recuoSimples, sd = d - QUADRA.recuoSimples;
+    var rede = QUADRA.comprimento / 2;
+    var sf = rede - QUADRA.saque, sfr = rede + QUADRA.saque;
+    var meio = d / 2;
+    return [
+      [[e, 0], [d, 0]], [[e, QUADRA.comprimento], [d, QUADRA.comprimento]],
+      [[e, 0], [e, QUADRA.comprimento]], [[d, 0], [d, QUADRA.comprimento]],
+      [[se, 0], [se, QUADRA.comprimento]], [[sd, 0], [sd, QUADRA.comprimento]],
+      [[e, rede], [d, rede]],
+      [[se, sf], [sd, sf]], [[se, sfr], [sd, sfr]],
+      [[meio, sf], [meio, sfr]]
+    ];
+  }
+
+  function pontosDeReferencia() {
+    var e = 0, d = QUADRA.largura;
+    var se = QUADRA.recuoSimples, sd = d - QUADRA.recuoSimples;
+    var rede = QUADRA.comprimento / 2;
+    var sf = rede - QUADRA.saque, sfr = rede + QUADRA.saque;
+    var meio = d / 2, fim = QUADRA.comprimento;
+    return [
+      [e, 0], [d, 0], [e, fim], [d, fim],
+      [se, 0], [sd, 0], [se, fim], [sd, fim],
+      [se, sf], [sd, sf], [se, sfr], [sd, sfr],
+      [meio, sf], [meio, sfr], [e, rede], [d, rede]
+    ];
+  }
+
+  /* ---------- estado da simulacao ---------- */
+
+  var tela = document.getElementById("tela");
+  var ctx = tela.getContext("2d");
+  var W = tela.width, H = tela.height;
+
+  // cada jogador guarda posicao e alvo em metros, mais os acumuladores
+  // de estatistica, do mesmo jeito que o sistema em Python faz
+  function novoJogador(nome, yInicial) {
+    return {
+      nome: nome,
+      x: QUADRA.largura / 2, y: yInicial,
+      alvoX: QUADRA.largura / 2, alvoY: yInicial,
+      distancia: 0,
+      velocidade: 0,          // km/h, suavizada para leitura
+      velocidadeMaxima: 0,
+      calor: new Float32Array(22 * 44)   // grade do mapa de calor
+    };
+  }
+
+  var estado;
+
+  function reiniciar() {
+    estado = {
+      j1: novoJogador("Jogador 1", QUADRA.comprimento - 1.2),  // frente
+      j2: novoJogador("Jogador 2", 1.2),                        // fundo
+      bola: { x: QUADRA.largura / 2, y: QUADRA.comprimento - 1.2, altura: 0, voando: false },
+      voo: null,             // dados do voo atual da bola
+      rastro: [],            // ultimas posicoes da bola na tela
+      fase: "pausa",         // "ponto" ou "pausa"
+      tempoFase: 1.2,        // quanto falta para a fase acabar
+      batidasRestantes: 0,   // quantas trocas de bola ainda tem no ponto
+      pontos: 0,
+      relogio: 0,
+      pausado: false,
+      velocidadeSim: 1
+    };
+  }
+  reiniciar();
+
+  /* ---------- a troca de bolas ----------
+     um ponto é uma sequencia de batidas. a cada batida a bola voa
+     para um alvo do outro lado e o jogador de la corre para chegar */
+
+  function iniciarPonto() {
+    estado.fase = "ponto";
+    estado.pontos += 1;
+    estado.batidasRestantes = 4 + Math.floor(Math.random() * 9);
+    // o saque sai de quem esta na frente, so por simplicidade
+    lancarBola(estado.j1, estado.j2);
+  }
+
+  function lancarBola(de, para) {
+    // o alvo é um lugar aleatorio do lado de quem recebe, perto do fundo
+    var alvoX = 1.2 + Math.random() * (QUADRA.largura - 2.4);
+    var alvoY;
+    if (para.y < QUADRA.comprimento / 2) {
+      alvoY = 0.6 + Math.random() * 4.5;              // lado do fundo
+    } else {
+      alvoY = QUADRA.comprimento - 0.6 - Math.random() * 4.5;   // lado da frente
+    }
+
+    estado.voo = {
+      deX: de.x, deY: de.y,
+      paraX: alvoX, paraY: alvoY,
+      duracao: 0.75 + Math.random() * 0.5,
+      tempo: 0,
+      recebe: para
+    };
+    estado.bola.voando = true;
+
+    // quem recebe ja sai correndo para o ponto de encontro
+    para.alvoX = alvoX;
+    para.alvoY = alvoY;
+
+    // quem bateu volta a se posicionar perto do centro do proprio lado
+    de.alvoX = QUADRA.largura / 2 + (Math.random() - 0.5) * 3;
+    de.alvoY = de.y < QUADRA.comprimento / 2 ? 1.5 : QUADRA.comprimento - 1.5;
+  }
+
+  function terminarPonto() {
+    estado.fase = "pausa";
+    estado.tempoFase = 2.5 + Math.random() * 1.5;
+    estado.bola.voando = false;
+    estado.voo = null;
+    // na pausa os dois caminham de volta para o meio da linha de fundo
+    estado.j1.alvoX = QUADRA.largura / 2;
+    estado.j1.alvoY = QUADRA.comprimento - 1.2;
+    estado.j2.alvoX = QUADRA.largura / 2;
+    estado.j2.alvoY = 1.2;
+  }
+
+  /* ---------- atualizacao da fisica e das estatisticas ---------- */
+
+  function moverJogador(j, dt, correndo) {
+    // velocidade maxima de deslocamento: correndo durante o ponto,
+    // caminhando durante a pausa
+    var maxVel = correndo ? 5.2 : 1.3;
+
+    var dx = j.alvoX - j.x;
+    var dy = j.alvoY - j.y;
+    var dist = Math.hypot(dx, dy);
+
+    var passo = 0;
+    if (dist > 0.05) {
+      passo = Math.min(dist, maxVel * dt);
+      j.x += dx / dist * passo;
+      j.y += dy / dist * passo;
+    }
+
+    // as estatisticas acumulam igual no sistema real: distancia soma
+    // o passo e a velocidade mostrada é suavizada para nao tremer
+    j.distancia += passo;
+    var velAgora = (dt > 0 ? passo / dt : 0) * 3.6;
+    j.velocidade = j.velocidade * 0.85 + velAgora * 0.15;
+    if (j.velocidade > j.velocidadeMaxima) j.velocidadeMaxima = j.velocidade;
+
+    // grade do mapa de calor, 22 colunas por 44 linhas
+    var col = Math.min(21, Math.max(0, Math.floor(j.x / QUADRA.largura * 22)));
+    var lin = Math.min(43, Math.max(0, Math.floor(j.y / QUADRA.comprimento * 44)));
+    j.calor[lin * 22 + col] += dt;
+  }
+
+  function atualizar(dt) {
+    estado.relogio += dt;
+
+    if (estado.fase === "pausa") {
+      estado.tempoFase -= dt;
+      moverJogador(estado.j1, dt, false);
+      moverJogador(estado.j2, dt, false);
+      if (estado.tempoFase <= 0) iniciarPonto();
+      return;
+    }
+
+    // fase de ponto: jogadores correndo e bola voando
+    moverJogador(estado.j1, dt, true);
+    moverJogador(estado.j2, dt, true);
+
+    var voo = estado.voo;
+    if (voo) {
+      voo.tempo += dt;
+      var f = Math.min(1, voo.tempo / voo.duracao);
+
+      // posicao da bola interpolada entre a saida e o alvo, com um
+      // arco de altura por cima, que zera na saida e na chegada
+      estado.bola.x = voo.deX + (voo.paraX - voo.deX) * f;
+      estado.bola.y = voo.deY + (voo.paraY - voo.deY) * f;
+      estado.bola.altura = Math.sin(f * Math.PI) * 1.6;
+
+      if (f >= 1) {
+        // a bola chegou, quem recebe devolve ou o ponto acaba
+        estado.batidasRestantes -= 1;
+        if (estado.batidasRestantes <= 0) {
+          terminarPonto();
+        } else {
+          var quemBate = voo.recebe;
+          var outro = quemBate === estado.j1 ? estado.j2 : estado.j1;
+          lancarBola(quemBate, outro);
+        }
+      }
+    }
+  }
+
+  /* ---------- desenho da cena ---------- */
+
+  var CORES = {
+    grama: "#3a7a52",         // area em volta da quadra
+    piso: "#2c4d8f",          // piso azul da quadra, como na referencia
+    pisoInterno: "#3b62b0",   // area de simples um tom mais claro
+    linha: "#e8ecf2",
+    caixa: "#2f7fd4",         // azul das caixas de deteccao
+    ponto: "#e33",            // vermelho dos pontos da quadra
+    rastro: "#5ad06e",        // verde do rastro da bola
+    bola: "#ffd23f",
+    jogador1: "#0072B2",
+    jogador2: "#D55E00"
+  };
+
+  function desenharQuadra() {
+    // fundo verde do entorno
+    ctx.fillStyle = CORES.grama;
+    ctx.fillRect(0, 0, W, H);
+
+    // o piso azul é o poligono entre os quatro cantos, com uma folga
+    // de dois metros em volta das linhas
+    var folga = 2.2;
+    var cantos = [
+      projetar(-folga, -folga, W, H),
+      projetar(QUADRA.largura + folga, -folga, W, H),
+      projetar(QUADRA.largura + folga, QUADRA.comprimento + folga, W, H),
+      projetar(-folga, QUADRA.comprimento + folga, W, H)
+    ];
+    ctx.fillStyle = CORES.piso;
+    ctx.beginPath();
+    ctx.moveTo(cantos[0].x, cantos[0].y);
+    for (var i = 1; i < cantos.length; i++) ctx.lineTo(cantos[i].x, cantos[i].y);
+    ctx.closePath();
+    ctx.fill();
+
+    // area interna num tom mais claro, so para dar leitura de quadra
+    var internos = [
+      projetar(0, 0, W, H), projetar(QUADRA.largura, 0, W, H),
+      projetar(QUADRA.largura, QUADRA.comprimento, W, H), projetar(0, QUADRA.comprimento, W, H)
+    ];
+    ctx.fillStyle = CORES.pisoInterno;
+    ctx.beginPath();
+    ctx.moveTo(internos[0].x, internos[0].y);
+    for (var k = 1; k < internos.length; k++) ctx.lineTo(internos[k].x, internos[k].y);
+    ctx.closePath();
+    ctx.fill();
+
+    // linhas brancas da quadra
+    ctx.strokeStyle = CORES.linha;
+    ctx.lineWidth = 2;
+    var segmentos = segmentosDaQuadra();
+    for (var s = 0; s < segmentos.length; s++) {
+      var a = projetar(segmentos[s][0][0], segmentos[s][0][1], W, H);
+      var b = projetar(segmentos[s][1][0], segmentos[s][1][1], W, H);
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+    }
+
+    // a rede aparece como uma faixa escura sobre a linha do meio
+    var redeE = projetar(-0.5, QUADRA.comprimento / 2, W, H);
+    var redeD = projetar(QUADRA.largura + 0.5, QUADRA.comprimento / 2, W, H);
+    var alturaRede = redeE.escala * 1.0;
+    ctx.fillStyle = "rgba(20, 24, 34, 0.85)";
+    ctx.fillRect(redeE.x, redeE.y - alturaRede, redeD.x - redeE.x, alturaRede);
+    ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
+    ctx.fillRect(redeE.x, redeE.y - alturaRede, redeD.x - redeE.x, 2);
+
+    // pontos vermelhos de referencia, como o sistema real desenha
+    var pontos = pontosDeReferencia();
+    for (var p = 0; p < pontos.length; p++) {
+      var pr = projetar(pontos[p][0], pontos[p][1], W, H);
+      ctx.fillStyle = CORES.ponto;
+      ctx.beginPath();
+      ctx.arc(pr.x, pr.y, Math.max(3, pr.escala * 0.09), 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function desenharJogador(j, rotulo) {
+    var pos = projetar(j.x, j.y, W, H);
+    var alturaPx = pos.escala * 1.9;   // 1.9 m de altura convertidos
+    var larguraPx = alturaPx * 0.42;
+
+    // silhueta simples: corpo e cabeca em tom escuro
+    ctx.fillStyle = "#22262b";
+    ctx.beginPath();
+    ctx.ellipse(pos.x, pos.y - alturaPx * 0.45, larguraPx * 0.32, alturaPx * 0.42, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y - alturaPx * 0.92, alturaPx * 0.10, 0, Math.PI * 2);
+    ctx.fill();
+
+    // caixa de deteccao azul com o rotulo em cima, igual ao YOLO
+    var cx1 = pos.x - larguraPx * 0.62;
+    var cy1 = pos.y - alturaPx * 1.06;
+    var cw = larguraPx * 1.24;
+    var ch = alturaPx * 1.1;
+    ctx.strokeStyle = CORES.caixa;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(cx1, cy1, cw, ch);
+
+    ctx.fillStyle = CORES.caixa;
+    ctx.font = "600 " + Math.max(11, pos.escala * 0.34) + "px 'IBM Plex Mono', monospace";
+    ctx.fillText(rotulo, cx1, cy1 - 5);
+  }
+
+  function desenharBola() {
+    if (!estado.bola.voando) return;
+
+    var pos = projetar(estado.bola.x, estado.bola.y, W, H);
+    // a altura do arco vira um deslocamento para cima na tela,
+    // proporcional a escala da profundidade onde a bola esta
+    var y = pos.y - estado.bola.altura * pos.escala;
+
+    // guarda a posicao para o rastro
+    estado.rastro.unshift({ x: pos.x, y: y });
+    if (estado.rastro.length > 9) estado.rastro.pop();
+
+    // circulos verdes envelhecendo, como na imagem de referencia
+    for (var i = estado.rastro.length - 1; i >= 1; i--) {
+      ctx.strokeStyle = CORES.rastro;
+      ctx.globalAlpha = 1 - i / estado.rastro.length;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(estado.rastro[i].x, estado.rastro[i].y, Math.max(2, 7 - i * 0.5), 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+
+    ctx.fillStyle = CORES.bola;
+    ctx.beginPath();
+    ctx.arc(pos.x, y, Math.max(3.5, pos.escala * 0.10), 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  function desenharMinimapa() {
+    // painel escuro no canto superior direito, quadra vista de cima
+    var mw = W * 0.135, mh = mw * 2.05;
+    var mx = W - mw - 18, my = 18;
+    var borda = mw * 0.12;
+
+    ctx.fillStyle = "rgba(8, 10, 14, 0.92)";
+    ctx.fillRect(mx, my, mw, mh);
+
+    function noMapa(xm, ym) {
+      return {
+        x: mx + borda + xm / QUADRA.largura * (mw - 2 * borda),
+        y: my + borda + ym / QUADRA.comprimento * (mh - 2 * borda)
+      };
+    }
+
+    ctx.strokeStyle = "#dfe4ea";
+    ctx.lineWidth = 1;
+    var segmentos = segmentosDaQuadra();
+    for (var s = 0; s < segmentos.length; s++) {
+      var a = noMapa(segmentos[s][0][0], segmentos[s][0][1]);
+      var b = noMapa(segmentos[s][1][0], segmentos[s][1][1]);
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+    }
+
+    // jogadores com as cores de identidade e a bola em amarelo
+    var p2 = noMapa(estado.j2.x, estado.j2.y);
+    ctx.fillStyle = CORES.jogador2;
+    ctx.beginPath(); ctx.arc(p2.x, p2.y, 4, 0, Math.PI * 2); ctx.fill();
+
+    var p1 = noMapa(estado.j1.x, estado.j1.y);
+    ctx.fillStyle = CORES.jogador1;
+    ctx.beginPath(); ctx.arc(p1.x, p1.y, 4, 0, Math.PI * 2); ctx.fill();
+
+    if (estado.bola.voando) {
+      var pb = noMapa(estado.bola.x, estado.bola.y);
+      ctx.fillStyle = CORES.bola;
+      ctx.beginPath(); ctx.arc(pb.x, pb.y, 3, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  function desenharCena() {
+    desenharQuadra();
+    // o jogador do fundo é desenhado primeiro para ficar atras da rede
+    desenharJogador(estado.j2, "Jogador 2");
+    desenharBola();
+    desenharJogador(estado.j1, "Jogador 1");
+    desenharMinimapa();
+  }
+
+  /* ---------- mapas de calor ----------
+     rampa sequencial de um tom so, do escuro ao claro, com a
+     luminosidade sempre crescendo, para leitura correta de magnitude */
+
+  var RAMPA = [
+    [23, 20, 15], [80, 26, 14], [151, 45, 11],
+    [214, 84, 8], [244, 143, 34], [252, 204, 116], [255, 244, 214]
+  ];
+
+  function corDaRampa(v) {
+    // v vai de 0 a 1 e escolhe um ponto no degrade da rampa
+    var pos = v * (RAMPA.length - 1);
+    var i = Math.min(RAMPA.length - 2, Math.floor(pos));
+    var f = pos - i;
+    var a = RAMPA[i], b = RAMPA[i + 1];
+    return "rgb(" + Math.round(a[0] + (b[0] - a[0]) * f) + ","
+                  + Math.round(a[1] + (b[1] - a[1]) * f) + ","
+                  + Math.round(a[2] + (b[2] - a[2]) * f) + ")";
+  }
+
+  function desenharCalor(canvas, jogador) {
+    var c = canvas.getContext("2d");
+    var cw = canvas.width, chh = canvas.height;
+    var celW = cw / 22, celH = chh / 44;
+
+    // normaliza pela celula mais visitada, o mapa é sempre relativo
+    var maximo = 0;
+    for (var i = 0; i < jogador.calor.length; i++) {
+      if (jogador.calor[i] > maximo) maximo = jogador.calor[i];
+    }
+
+    c.fillStyle = "#17140f";
+    c.fillRect(0, 0, cw, chh);
+
+    if (maximo > 0) {
+      for (var lin = 0; lin < 44; lin++) {
+        for (var col = 0; col < 22; col++) {
+          var v = jogador.calor[lin * 22 + col] / maximo;
+          if (v <= 0.004) continue;
+          c.fillStyle = corDaRampa(Math.sqrt(v));  // a raiz realca o comeco
+          c.fillRect(col * celW, lin * celH, celW + 0.5, celH + 0.5);
+        }
+      }
+    }
+
+    // as linhas da quadra por cima ajudam a se localizar
+    c.strokeStyle = "rgba(255,255,255,0.45)";
+    c.lineWidth = 1;
+    var segmentos = segmentosDaQuadra();
+    for (var s = 0; s < segmentos.length; s++) {
+      var a = segmentos[s][0], b = segmentos[s][1];
+      c.beginPath();
+      c.moveTo(a[0] / QUADRA.largura * cw, a[1] / QUADRA.comprimento * chh);
+      c.lineTo(b[0] / QUADRA.largura * cw, b[1] / QUADRA.comprimento * chh);
+      c.stroke();
+    }
+  }
+
+  /* ---------- atualizacao dos numeros na pagina ---------- */
+
+  var el = {
+    j1d: document.getElementById("j1-distancia"),
+    j1v: document.getElementById("j1-velocidade"),
+    j1m: document.getElementById("j1-maxima"),
+    j2d: document.getElementById("j2-distancia"),
+    j2v: document.getElementById("j2-velocidade"),
+    j2m: document.getElementById("j2-maxima"),
+    j1barra: document.getElementById("j1-barra"),
+    j2barra: document.getElementById("j2-barra"),
+    j1barraValor: document.getElementById("j1-barra-valor"),
+    j2barraValor: document.getElementById("j2-barra-valor"),
+    pontos: document.getElementById("contador-pontos"),
+    situacao: document.getElementById("situacao-ponto"),
+    relogio: document.getElementById("relogio"),
+    calorJ1: document.getElementById("calor-j1"),
+    calorJ2: document.getElementById("calor-j2")
+  };
+
+  var TEXTOS = {
+    pt: { emPonto: "PONTO EM DISPUTA", emPausa: "pausa entre pontos" },
+    en: { emPonto: "POINT IN PLAY", emPausa: "between points" }
+  };
+
+  function atualizarPainel() {
+    el.j1d.textContent = Math.round(estado.j1.distancia);
+    el.j1v.textContent = estado.j1.velocidade.toFixed(1);
+    el.j1m.textContent = estado.j1.velocidadeMaxima.toFixed(1);
+    el.j2d.textContent = Math.round(estado.j2.distancia);
+    el.j2v.textContent = estado.j2.velocidade.toFixed(1);
+    el.j2m.textContent = estado.j2.velocidadeMaxima.toFixed(1);
+    el.pontos.textContent = estado.pontos;
+
+    // barras de comparacao, a maior distancia define os 100 por cento
+    var maior = Math.max(estado.j1.distancia, estado.j2.distancia, 1);
+    el.j1barra.style.width = (estado.j1.distancia / maior * 100) + "%";
+    el.j2barra.style.width = (estado.j2.distancia / maior * 100) + "%";
+    el.j1barraValor.textContent = Math.round(estado.j1.distancia) + " m";
+    el.j2barraValor.textContent = Math.round(estado.j2.distancia) + " m";
+
+    var idioma = body.classList.contains("lang-en") ? "en" : "pt";
+    if (estado.fase === "ponto") {
+      el.situacao.innerHTML = "<span class='ativo'>" + TEXTOS[idioma].emPonto + "</span>";
+    } else {
+      el.situacao.textContent = TEXTOS[idioma].emPausa;
+    }
+
+    var min = Math.floor(estado.relogio / 60);
+    var seg = Math.floor(estado.relogio % 60);
+    el.relogio.textContent = (min < 10 ? "0" : "") + min + ":" + (seg < 10 ? "0" : "") + seg;
+  }
+
+  /* ---------- controles ---------- */
+
+  document.getElementById("botao-pausa").addEventListener("click", function () {
+    estado.pausado = !estado.pausado;
+    var pt = this.querySelector("[data-lang='pt']");
+    var en = this.querySelector("[data-lang='en']");
+    pt.textContent = estado.pausado ? "Continuar" : "Pausar";
+    en.textContent = estado.pausado ? "Resume" : "Pause";
+  });
+
+  document.getElementById("botao-reinicio").addEventListener("click", function () {
+    var pausadoAntes = estado.pausado;
+    var velAntes = estado.velocidadeSim;
+    reiniciar();
+    estado.pausado = pausadoAntes;
+    estado.velocidadeSim = velAntes;
+  });
+
+  document.getElementById("botao-velocidade").addEventListener("click", function () {
+    estado.velocidadeSim = estado.velocidadeSim === 1 ? 2 : 1;
+    this.textContent = estado.velocidadeSim + "x";
+  });
+
+  /* ---------- laco principal ---------- */
+
+  var ultimoTempo = null;
+  var quadrosDesdeCalor = 0;
+
+  function laco(agora) {
+    if (ultimoTempo === null) ultimoTempo = agora;
+    // dt limitado para a simulacao nao dar saltos quando a aba
+    // fica um tempo em segundo plano
+    var dt = Math.min(0.05, (agora - ultimoTempo) / 1000);
+    ultimoTempo = agora;
+
+    if (!estado.pausado) {
+      // a velocidade 2x roda a fisica duas vezes por quadro
+      for (var v = 0; v < estado.velocidadeSim; v++) atualizar(dt);
+      desenharCena();
+      atualizarPainel();
+
+      // os mapas de calor mudam devagar, redesenhar a cada quadro
+      // seria desperdicio, entao atualizamos a cada 15
+      quadrosDesdeCalor += 1;
+      if (quadrosDesdeCalor >= 15) {
+        quadrosDesdeCalor = 0;
+        desenharCalor(el.calorJ1, estado.j1);
+        desenharCalor(el.calorJ2, estado.j2);
+      }
+    }
+
+    requestAnimationFrame(laco);
+  }
+
+  desenharCena();
+  desenharCalor(el.calorJ1, estado.j1);
+  desenharCalor(el.calorJ2, estado.j2);
+  requestAnimationFrame(laco);
+})();
+</script>
+</body>
+</html>

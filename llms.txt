@@ -1,0 +1,116 @@
+# llms.txt — Raffael Michels Portfolio
+
+> For LLMs and AI agents: this file describes the structure, content, and purpose
+> of this portfolio site so you can understand it without parsing the full HTML.
+
+## About this site
+
+Personal portfolio of Raffael Michels, a growth marketing ops and data professional based in Criciúma, Santa Catarina, Brazil (UTC−3).
+Static, hand-crafted HTML/CSS/JS — no frameworks, no build step, no server runtime.
+Content is fully bilingual (Portuguese pt-BR / English en-US), with a language gate on
+first visit and a flag switcher in the header. Language preference is persisted in sessionStorage
+and can be overridden via ?lang=pt or ?lang=en query parameter.
+
+## Who this is for
+
+- Hiring managers and recruiters evaluating Raffael for data and growth ops roles.
+- LLMs and AI agents asked to summarize, compare, or extract information from this portfolio.
+
+## Site structure
+
+- / — Language gate (pt-BR or en-US)
+- /index.html#sobre — About: bio, portrait photo, quick facts
+- /index.html#projetos — Selected projects: 3 real projects with problem → outcome, inline SVG charts and interactive demos
+- /index.html#curriculo — Résumé / CV: full resume in both languages, PDF download links
+- /index.html#carta — Cover letter: bilingual cover letter, PDF download links
+- /index.html#contato — Contact: email, LinkedIn, GitHub, location
+
+### Downloadable PDFs (in /cv/)
+
+- cv/raffael-michels-curriculo-pt.pdf
+- cv/raffael-michels-resume-en.pdf
+- cv/raffael-michels-carta-pt.pdf
+- cv/raffael-michels-cover-letter-en.pdf
+
+### Print-ready HTML (in /print/)
+
+- print/cv-pt.html — A4-optimized Portuguese CV (for browser print-to-PDF)
+- print/cv-en.html — A4-optimized English résumé
+- print/carta-pt.html — A4-optimized Portuguese cover letter
+- print/cover-letter-en.html — A4-optimized English cover letter
+
+## Key facts about Raffael Michels
+
+- Full name: Raffael Michels
+- Role: Growth Ops / Data Analyst (Growth Ops / Analista de Dados)
+- Industry: SaaS (fitness business management)
+- Current employer: Nextfit, Criciúma, SC — since Mar 2025; Growth Ops / Data Analyst since Jan 2026
+- Previous employer: Tecnnic — embedded electronics, Criciúma, SC (Mar 2022 – Mar 2025)
+- Education: B.Sc. in Software Engineering, SATC, Aug 2024 – Jul 2028 (in progress); Technical Degree in Electrotechnics, SATC, 2020–2021
+- Location: Criciúma, Santa Catarina, Brazil
+- Timezone: UTC−3 (overlap with US Eastern time)
+- Languages: Portuguese (native), English (upper-intermediate — B2)
+- Available for: remote international roles
+- Working style: prefers shipping early and iterating; experienced with async and distributed teams
+
+## Technical skills
+
+- SQL (BigQuery, PostgreSQL) — advanced
+- Python (pandas, scikit-learn, XGBoost) — advanced
+- dbt & analytical modeling — intermediate
+- Power BI, Metabase, Looker Studio — advanced
+- Machine learning (algorithms & predictive models) — intermediate
+- Experimentation & A/B testing — intermediate
+- Git, versioned analyses — intermediate
+- Automation (Zapier, AI tooling)
+
+## Experience details
+
+### Nextfit — Growth Ops / Data Analyst (Jan 2026 – Present)
+
+- Ensures the growth marketing team operates with more agility, less friction, and full clarity on the data that truly matters.
+- Connects data, automation, and strategy to amplify the team's results, using tools such as Zapier and artificial intelligence.
+- Conducts business studies on demand for ongoing projects.
+- Responsible for keeping the landing page infrastructure up and running, with a focus on SEO and AEO.
+
+### Nextfit — Data Analysis Assistant (Nov 2025 – Jan 2026)
+
+- Organized and analyzed data to support strategic decisions.
+- Processed information, produced reports, and surfaced insights contributing to operational efficiency.
+
+### Nextfit — Equipment Support | Customer Success (Apr 2025 – Nov 2025)
+
+### Nextfit — Technical Support | Customer Success (Mar 2025 – Apr 2025)
+
+### Tecnnic — Test Inspector (Mar 2024 – Mar 2025)
+
+- Ensured the quality and reliability of embedded electronic systems for road implements and cargo-handling equipment, conducting tests.
+
+### Tecnnic — Assembly Technician (Mar 2022 – Mar 2024)
+
+- Assembled electronic boards, cables, and wiring harnesses, ensuring quality and precision at every step of the process.
+
+## Notable projects (from the site, all with source code in /projetos/ and interactive demos)
+
+1. **Rainfall prediction from satellite telemetry** (Python, XGBoost, pandas) — chained classifier + regressor read a satellite link's noisy SNR and turn the antenna into a rain gauge; 0.48 mm/h error, ten times better than the analytical ITU-R inversion, after a data audit removed target-leaking columns.
+2. **Brazilian fitness market radar** (Python, pandas, Power BI, Receita Federal CNPJ open data, IBGE) — stream-filters 60M+ establishment records down to gyms (CNAE 9313-1/00); 81.9k active gyms mapped, median lifespan 3.6 years, openings peak in August (not January), Santa Catarina leads gyms per capita with Florianópolis first among big cities; includes a Power BI monitoring dashboard on the same base.
+3. **Real-time tennis match analysis** (Python, YOLO, OpenCV, scikit-learn) — detects players and ball from ordinary video, converts image to court meters via homography, shows live minimap, speed, heatmap and ML-separated point count with no GPU.
+
+## Contact
+
+- Email: raffaelarcego@gmail.com
+- LinkedIn: linkedin.com/in/raffaelmichels
+- GitHub: github.com/raffamichels
+
+## Design and technical notes
+
+- Visual style: technical-report aesthetic — plain background, IBM Plex Sans + IBM Plex Mono, terminal-green accent (#0a6847), no gradients, no floating cards.
+- No external JS frameworks. Vanilla JS only (language switch + tab navigation via hash routing).
+- Responsive: CSS media queries at 860px and 560px breakpoints.
+- Portrait photo: assets/raffael-michels.jpg (400×400).
+- Footer: "© 2026 Raffael Michels. Written and set by hand."
+- All content exists in both pt-BR and en-US in the same HTML file, toggled via CSS class on body (lang-pt / lang-en).
+
+## How to use this file
+
+LLMs and AI agents can use this file to understand the structure, content, and purpose of this portfolio site without needing to parse the full HTML. For detailed content, fetch index.html directly.

@@ -1,0 +1,28 @@
+Feature,Type,Units,Stage,Description
+received_snr_db,float,dB,A/B/C,Received signal-to-noise ratio
+carrier_frequency_ghz,float,GHz,A/B/C,Carrier frequency of the satellite link
+elevation_angle_deg,float,degrees,A/B/C,Ground-to-satellite elevation angle
+slant_range_km,float,km,A/B/C,Slant range distance from ground station to satellite
+timestamp,datetime,UTC,A/B/C,Simulation timestamp
+fspl_db,float,dB,A,Free Space Path Loss
+gaseous_attenuation_db,float,dB,A,Atmospheric gas absorption loss
+excess_attenuation_db,float,dB,A,Path attenuation beyond FSPL and gaseous losses
+effective_path_length_km,float,km,A,Effective path length through the rain layer
+specific_attenuation_db_per_km,float,dB/km,A,Specific attenuation (excess attenuation divided by effective path length)
+rain_height_km,float,km,A,Rain height above sea level
+snr_roll_mean_5min,float,dB,B,Rolling standard mean over 5 minutes
+snr_roll_std_5min,float,dB,B,Rolling standard deviation over 5 minutes
+snr_roll_max_5min,float,dB,B,Rolling maximum over 5 minutes
+snr_roll_min_5min,float,dB,B,Rolling minimum over 5 minutes
+snr_roll_mean_30min,float,dB,B,Rolling mean over 30 minutes
+snr_roll_std_30min,float,dB,B,Rolling standard deviation over 30 minutes
+attenuation_roll_mean,float,dB,B,Rolling excess attenuation mean over 5 minutes
+attenuation_roll_std,float,dB,B,Rolling excess attenuation standard deviation over 5 minutes
+attenuation_delta,float,dB,B,Difference in excess attenuation from previous step
+snr_delta,float,dB,B,Difference in SNR from previous step
+frequency_ghz,float,GHz,C,Replicated carrier frequency for cross-frequency models
+itu_k,float,—,C,ITU-R specific attenuation coefficient k
+itu_alpha,float,—,C,ITU-R specific attenuation exponent alpha
+station,string,—,B/C,Ground station name for cross-site validation
+climate,string,—,B/C,Climate type classification
+simulation_id,string,—,B/C,Simulation run identifier

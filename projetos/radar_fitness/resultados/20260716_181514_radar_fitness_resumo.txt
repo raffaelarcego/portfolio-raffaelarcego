@@ -1,0 +1,61 @@
+RADAR DO MERCADO FITNESS BRASILEIRO
+foto da base de CNPJ da Receita Federal de 2026-06-14
+
+VISAO GERAL
+  registros com CNAE de academia:  164,922
+  ativas hoje:                     81,869
+  baixadas:                        60,390
+  outras situacoes:                22,663
+
+RITMO
+  ano com mais aberturas: 2017 (14,773)
+  vida mediana das que fecharam: 3.57 anos (quartis 1.49 e 7.11)
+  mes de pico das aberturas: ago (9.4% do ano)
+  janeiro fica em 1.08x a media mensal, o mito da promessa de ano novo nao aparece do lado dos donos
+
+SOBREVIVENCIA POR COORTE (% ainda ativa hoje)
+  2010   31.7%  (1,232 de 3,889)
+  2011   31.3%  (1,394 de 4,459)
+  2012   31.9%  (1,559 de 4,890)
+  2013   33.8%  (2,056 de 6,091)
+  2014   24.2%  (2,486 de 10,275)
+  2015   20.9%  (2,584 de 12,338)
+  2016   21.0%  (2,796 de 13,321)
+  2017   21.8%  (3,226 de 14,773)
+  2018   53.9%  (3,442 de 6,390)
+  2019   60.7%  (4,361 de 7,184)
+  2020   67.2%  (4,171 de 6,209)
+  2021   71.6%  (5,562 de 7,766)
+  2022   78.6%  (6,275 de 7,979)
+  2023   85.4%  (7,666 de 8,979)
+  2024   89.9%  (9,030 de 10,040)
+
+UF COM MAIS ACADEMIAS POR 100 MIL HABITANTES
+  SC    55.2  (4,522 ativas)
+  DF    53.1  (1,592 ativas)
+  RS    48.6  (5,455 ativas)
+  PR    46.4  (5,523 ativas)
+  SP    44.8  (20,644 ativas)
+
+UF COM MENOS ACADEMIAS POR 100 MIL HABITANTES
+  MA    24.1  (1,688 ativas)
+  PA    23.0  (2,001 ativas)
+  RR    21.4  (158 ativas)
+  AM    16.1  (694 ativas)
+  AC    15.9  (141 ativas)
+
+CIDADES GRANDES MAIS SERVIDAS (100 mil+ habitantes)
+  Florianopolis SC   100.3 por 100k
+  Sao Caetano Do Sul SP    95.0 por 100k
+  Balneario Camboriu SC    93.0 por 100k
+  Tubarao SC    78.0 por 100k
+  Porto Alegre RS    76.5 por 100k
+
+CIDADES GRANDES MENOS SERVIDAS
+  Itacoatiara AM    12.3 por 100k
+  Breves PA    12.9 por 100k
+  Manacapuru AM    14.3 por 100k
+  Cameta PA    14.5 por 100k
+  Parintins AM    14.7 por 100k
+
+juncao com populacao do IBGE cobriu 99.8% das academias ativas
