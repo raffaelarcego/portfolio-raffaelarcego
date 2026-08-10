@@ -139,6 +139,8 @@ header.masthead {
   gap: 0.75rem 2rem;
 }
 
+.masthead .top-row { display: flex; align-items: center; flex-wrap: wrap; gap: 0.75rem 1.2rem; }
+
 .masthead .name {
   font-family: var(--mono);
   font-size: 1.05rem;
@@ -216,6 +218,7 @@ h2.display em { font-style: normal; color: var(--accent); }
   gap: 3.5rem;
   align-items: start;
 }
+.about-grid > div { min-width: 0; }
 
 .about-grid .lede { font-size: 1.12rem; line-height: 1.6; max-width: var(--measure); }
 .about-grid p { max-width: var(--measure); }
@@ -377,7 +380,7 @@ footer.colophon .mono { letter-spacing: 0.08em; text-transform: lowercase; }
 /* ============ RESPONSIVO ============ */
 
 @media (max-width: 860px) {
-  .about-grid { grid-template-columns: 1fr; }
+  .about-grid { grid-template-columns: minmax(0, 1fr); }
   .about-grid .side { max-width: 22rem; }
   .project { grid-template-columns: 2.6rem minmax(0, 1fr); }
   .project .chart { grid-column: 2; }
@@ -385,9 +388,49 @@ footer.colophon .mono { letter-spacing: 0.08em; text-transform: lowercase; }
   #lang-gate h1 { margin-bottom: 2rem; }
 }
 
+@media (max-width: 680px) {
+  html { overflow-x: hidden; }
+
+  header.masthead {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+    padding: 1.1rem 0 0.9rem;
+  }
+  .masthead .name { font-size: 1rem; }
+  .masthead .top-row { flex-direction: column; align-items: flex-start; width: 100%; gap: 0.3rem; }
+  .masthead nav {
+    margin-left: 0;
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 1.15rem;
+    padding-bottom: 2px;
+    mask-image: linear-gradient(to right, #000 92%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, #000 92%, transparent 100%);
+  }
+  .masthead nav::-webkit-scrollbar { display: none; }
+  .masthead nav a { flex: none; white-space: nowrap; }
+
+  main section.tab { padding: 2.2rem 0 3.2rem; }
+  h2.display { max-width: none; }
+
+  .facts div { flex-direction: column; align-items: flex-start; gap: 0.15rem; }
+  .facts dd { text-align: left; }
+
+  .contact-list a, .contact-list div.row { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
+
+  .cv-sheet, .letter { padding: 1.25rem; }
+  .cv-item .cv-line { flex-direction: column; align-items: flex-start; gap: 0.1rem; }
+}
+
 @media (max-width: 560px) {
   body { font-size: 0.98rem; }
-  .masthead nav { gap: 0.9rem 1.1rem; }
+  .sheet { padding: 0 1.1rem; }
   .project { grid-template-columns: 1fr; }
   .project .idx { padding-top: 0; }
+  .cv-actions { gap: 0.7rem; }
+  .btn { padding: 0.65rem 1rem; }
 }
