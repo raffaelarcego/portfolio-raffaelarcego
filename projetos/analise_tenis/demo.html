@@ -3,8 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Análise de Tênis em Tempo Real — Demonstração</title>
-<meta name="description" content="Demonstração interativa do sistema de análise de desempenho em partidas de tênis com visão computacional.">
+<title>Análise de Tênis em Tempo Real — Demonstração / Real-Time Tennis Analysis — Demo</title>
+<meta name="description" content="Demonstração interativa de análise de tênis com visão computacional · Interactive tennis match analysis demo using computer vision.">
+<link rel="canonical" href="https://www.raffaelarcego.com.br/projetos/analise_tenis/demo.html">
+<link rel="alternate" hreflang="pt-BR" href="https://www.raffaelarcego.com.br/projetos/analise_tenis/demo.html?lang=pt">
+<link rel="alternate" hreflang="en" href="https://www.raffaelarcego.com.br/projetos/analise_tenis/demo.html?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://www.raffaelarcego.com.br/projetos/analise_tenis/demo.html">
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -456,7 +461,9 @@ footer {
   }
 
   var salvo = null;
-  try { salvo = sessionStorage.getItem("lang"); } catch (e) { /* ignore */ }
+  var daUrl = /[?&]lang=(pt|en)/.exec(location.search);
+  if (daUrl) salvo = daUrl[1];
+  if (!salvo) { try { salvo = sessionStorage.getItem("lang"); } catch (e) { /* ignore */ } }
   definirIdioma(salvo === "en" ? "en" : "pt");
 
   /* ---------- medidas da quadra, em metros de verdade ---------- */

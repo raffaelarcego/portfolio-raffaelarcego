@@ -3,8 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Radar do Mercado Fitness — Demonstração</title>
-<meta name="description" content="Estudo do mercado de academias no Brasil a partir dos dados abertos de CNPJ da Receita Federal.">
+<title>Radar do Mercado Fitness — Demonstração / Fitness Market Radar — Demo</title>
+<meta name="description" content="Estudo do mercado de academias no Brasil via dados abertos de CNPJ · Study of the Brazilian gym market using open CNPJ data.">
+<link rel="canonical" href="https://www.raffaelarcego.com.br/projetos/radar_fitness/demo.html">
+<link rel="alternate" hreflang="pt-BR" href="https://www.raffaelarcego.com.br/projetos/radar_fitness/demo.html?lang=pt">
+<link rel="alternate" hreflang="en" href="https://www.raffaelarcego.com.br/projetos/radar_fitness/demo.html?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://www.raffaelarcego.com.br/projetos/radar_fitness/demo.html">
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -421,6 +426,7 @@ function idiomaAtual() { return document.body.classList.contains("lang-en") ? "e
 function trocarIdioma(lang) {
   document.body.classList.remove("lang-pt", "lang-en");
   document.body.classList.add("lang-" + lang);
+  document.documentElement.lang = lang === "en" ? "en-US" : "pt-BR";
   document.querySelectorAll("[data-set-lang]").forEach(botao => {
     botao.classList.toggle("on", botao.dataset.setLang === lang);
   });
@@ -742,9 +748,14 @@ function desenharTudo() {
   desenharCidades();
 }
 
-/* idioma inicial: o que a pessoa escolheu no site, se escolheu */
+/* idioma inicial: parametro na URL, senao o que a pessoa escolheu no site */
 let lingua = "pt";
-try { lingua = sessionStorage.getItem("lang") || "pt"; } catch (erro) {}
+const daUrl = /[?&]lang=(pt|en)/.exec(location.search);
+if (daUrl) {
+  lingua = daUrl[1];
+} else {
+  try { lingua = sessionStorage.getItem("lang") || "pt"; } catch (erro) {}
+}
 trocarIdioma(lingua);
 </script>
 </body>

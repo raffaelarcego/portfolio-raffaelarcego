@@ -88,7 +88,7 @@ a:hover { color: var(--accent); }
   margin: 0 0 1rem;
 }
 
-#lang-gate h1 {
+#lang-gate .gate-title {
   font-family: var(--mono);
   font-weight: 500;
   font-size: clamp(1.35rem, 3.4vw, 2.4rem);
@@ -96,7 +96,7 @@ a:hover { color: var(--accent); }
   margin: 0 0 2.6rem;
   max-width: 30ch;
 }
-#lang-gate h1 .gate-en { display: block; color: var(--soft); margin-top: 0.3rem; }
+#lang-gate .gate-title .gate-en { display: block; color: var(--soft); margin-top: 0.3rem; }
 
 .gate-options { border-top: 1px solid var(--rule-strong); max-width: 34rem; background: var(--panel); }
 
@@ -388,7 +388,7 @@ footer.colophon .mono { letter-spacing: 0.08em; text-transform: lowercase; }
   .project { grid-template-columns: 2.6rem minmax(0, 1fr); }
   .project .chart { grid-column: 2; }
   .cv-skills { grid-template-columns: 1fr; }
-  #lang-gate h1 { margin-bottom: 2rem; }
+  #lang-gate .gate-title { margin-bottom: 2rem; }
 }
 
 @media (max-width: 680px) {

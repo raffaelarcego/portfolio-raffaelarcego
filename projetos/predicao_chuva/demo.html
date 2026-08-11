@@ -3,8 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Predição de Chuva por Satélite — Demonstração</title>
-<meta name="description" content="Demonstração interativa do previsor de chuva que lê a telemetria de um enlace de satélite.">
+<title>Predição de Chuva por Satélite — Demonstração / Rainfall Prediction — Demo</title>
+<meta name="description" content="Demonstração interativa do previsor de chuva por satélite · Interactive demo of the satellite rainfall predictor.">
+<link rel="canonical" href="https://www.raffaelarcego.com.br/projetos/predicao_chuva/demo.html">
+<link rel="alternate" hreflang="pt-BR" href="https://www.raffaelarcego.com.br/projetos/predicao_chuva/demo.html?lang=pt">
+<link rel="alternate" hreflang="en" href="https://www.raffaelarcego.com.br/projetos/predicao_chuva/demo.html?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://www.raffaelarcego.com.br/projetos/predicao_chuva/demo.html">
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -434,7 +439,9 @@ footer {
   }
 
   var salvo = null;
-  try { salvo = sessionStorage.getItem("lang"); } catch (e) { /* ignore */ }
+  var daUrl = /[?&]lang=(pt|en)/.exec(location.search);
+  if (daUrl) salvo = daUrl[1];
+  if (!salvo) { try { salvo = sessionStorage.getItem("lang"); } catch (e) { /* ignore */ } }
   definirIdioma(salvo === "en" ? "en" : "pt");
 
   /* ---------- os dados vem do arquivo gerado pelo main.py ---------- */
